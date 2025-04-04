@@ -1,0 +1,58 @@
+[config]
+default_to_workspace = false
+
+[tasks.clean-api-client]
+script_runner = "@shell"
+script = '''
+rm -rf ./hab-rs-api-client/*
+'''
+
+[tasks.preprocess-openapi]
+script_runner = "@rust"
+script = '''
+//! ```cargo
+//! [dependencies]
+//! serde_json = "*"
+//! regex = "*"
+//! ```
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let openapi_json = std::fs::read_to_string("res/openhab_api_spec.json")?;
+    let mut openapi_value: serde_json::Value = serde_json::from_str(&openapi_json)?;
+
+    let security_schemes = openapi_value.get_mut("components").unwrap().get_mut("securitySchemes").unwrap();
+
+    let basic_auth = serde_json::json!({
+        "type": "http",
+        "scheme": "basic",
+    });
+    security_schemes.as_object_mut().unwrap().insert("basicAuth".to_string(), basic_auth);
+
+    let openapi_preprocessed = serde_json::to_string_pretty(&openapi_value)?;
+
+    let sec_re = regex::Regex::new(r#"(?m)"security": \[\s*\{\s*"#).unwrap();
+    let openapi_preprocessed = sec_re.replace_all(&openapi_preprocessed, r#"$0"basicAuth": [],"#).to_string();
+
+    std::fs::write("res/openhab_api_spec_pre.json", &openapi_preprocessed)?;
+    Ok(())
+}
+'''
+
+[tasks.fix-api-client]
+script_runner = "@duckscript"
+script = """
+voice_api = readfile "hab-rs-api-client/src/apis/voice_api.rs"
+voice_api = replace ${voice_api} ".as_ref()" ""
+writefile "hab-rs-api-client/src/apis/voice_api.rs" ${voice_api}
+""" 
+dependencies = ["generate-api-client"]
+
+[tasks.generate-api-client]
+command = "openapi-generator"
+args =[
+    "generate", 
+    "-i", "res/openhab_api_spec_pre.json",
+    "-g", "rust",
+    "-p", "packageName=hab-rs-api-client,library=reqwest-trait,bestFitInt=true,mockall=true,preferUnsignedInt=true,useBonBuilder=true,supportMiddleware=true,topLevelApiClient=true",
+    "-o", "hab-rs-api-client"
+]
+dependencies = ["clean-api-client", "preprocess-openapi"]

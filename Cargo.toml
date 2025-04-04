@@ -1,0 +1,30 @@
+[workspace]
+members = [
+    ".",
+    "hab-rs-api-client",
+]
+
+[workspace.package]
+version = "0.1.0"
+license = "MIT"
+edition = "2024"
+authors = ["DerFetzer <kontakt@derfetzer.de>"]
+
+[package]
+name = "hab-rs"
+version.workspace = true
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[workspace.dependencies]
+hab-rs-api-client = { version = "=8.0.0", path = "hab-rs-api-client" }
+
+[dependencies]
+hab-rs-api-client = { workspace = true, features = ["mockall", "bon"] }
+serde = { version = "1.0.219", features = ["derive"] }
+serde-nested-json = "0.1.3"
+serde_json = "1.0.140"
+serde_with = "3.12.0"
+thiserror = "2.0.12"
+
