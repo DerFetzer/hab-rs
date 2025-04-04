@@ -2,7 +2,6 @@ use std::str::FromStr;
 
 use serde::Deserialize;
 use serde_json::Value;
-use serde_nested_json;
 use serde_with::DeserializeFromStr;
 
 use crate::error::HabRsError;
@@ -66,10 +65,78 @@ impl FromStr for EventType {
 #[derive(Debug, PartialEq, Deserialize)]
 pub struct Message {
     topic: Topic,
+    #[serde(flatten)]
+    message_type: MessageType,
+}
+
+#[derive(Debug, PartialEq, Deserialize)]
+#[serde(tag = "type", content = "payload")]
+pub enum MessageType {
     #[serde(with = "serde_nested_json")]
-    payload: Value,
+    ItemStateEvent(StateChangedEvent),
+    #[serde(with = "serde_nested_json")]
+    ItemStateChangedEvent(StateChangedEvent),
+    #[serde(with = "serde_nested_json")]
+    GroupItemStateChangedEvent(StateChangedEvent),
+    #[serde(with = "serde_nested_json")]
+    ItemStateUpdatedEvent(StateUpdatedEvent),
+    #[serde(with = "serde_nested_json")]
+    ItemStatePredictedEvent(StatePredictedEvent),
+    #[serde(with = "serde_nested_json")]
+    GroupStateUpdatedEvent(StateUpdatedEvent),
+    #[serde(with = "serde_nested_json")]
+    ItemCommandEvent(StateUpdatedEvent),
+    #[serde(with = "serde_nested_json")]
+    RuleStatusInfoEvent(StatusInfoEvent),
+    #[serde(with = "serde_nested_json")]
+    ThingStatusInfoEvent(StatusInfoEvent),
+    #[serde(with = "serde_nested_json")]
+    ThingStatusInfoChangedEvent([StatusInfoEvent; 2]),
+    #[serde(with = "serde_nested_json")]
+    ChannelTriggeredEvent(ChannelTriggeredEvent),
+    #[serde(other)]
+    Unknown,
+}
+
+#[derive(Debug, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StatusInfoEvent {
+    status: String,
+    status_detail: String,
+    description: Option<String>,
+}
+
+#[derive(Debug, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StateChangedEvent {
     #[serde(rename = "type")]
-    message_type: String,
+    value_type: String,
+    value: String,
+    old_type: String,
+    old_value: String,
+}
+
+#[derive(Debug, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StateUpdatedEvent {
+    #[serde(rename = "type")]
+    value_type: String,
+    value: String,
+}
+
+#[derive(Debug, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct StatePredictedEvent {
+    predicted_type: String,
+    predicted_value: String,
+    is_confirmation: bool,
+}
+
+#[derive(Debug, PartialEq, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ChannelTriggeredEvent {
+    event: String,
+    channel: String,
 }
 
 #[derive(Debug, PartialEq, DeserializeFromStr)]
@@ -129,9 +196,27 @@ data: {"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\
                     entity: "jeelink:lacrosse:40".to_string(),
                     action: "status".to_string(),
                 },
-                payload: json!({"status":"ONLINE","statusDetail":"NONE"}),
-                message_type: "ThingStatusInfoEvent".to_string(),
+                message_type: MessageType::ThingStatusInfoEvent(StatusInfoEvent {
+                    status: "ONLINE".to_string(),
+                    status_detail: "NONE".to_string(),
+                    description: None,
+                }),
             }
+        );
+    }
+
+    #[test]
+    fn test_state_changed_event() {
+        let message_data = r#"{"topic":"openhab/items/Arbeit_Steck_P_power/statechanged","payload":"{\"type\":\"Decimal\",\"value\":\"222.23\",\"oldType\":\"Decimal\",\"oldValue\":\"225.99\"}","type":"ItemStateChangedEvent"}"#;
+        let message: Message = serde_json::from_str(message_data).unwrap();
+        assert_eq!(
+            message.message_type,
+            MessageType::ItemStateChangedEvent(StateChangedEvent {
+                value_type: "Decimal".to_string(),
+                value: "222.23".to_string(),
+                old_type: "Decimal".to_string(),
+                old_value: "225.99".to_string(),
+            })
         );
     }
 }
