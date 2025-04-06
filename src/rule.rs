@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
 use async_trait::async_trait;
-use hab_rs_api_client::apis::{Api, ApiClient, configuration::Configuration};
+use hab_rs_api_client::apis::Api;
 use tokio::{
     sync::broadcast::{self, Receiver},
     task::{Id, JoinSet},
@@ -10,15 +10,15 @@ use tracing::{error, info, warn};
 
 use crate::event::Event;
 
-pub struct RuleManager {
-    config: Arc<Configuration>,
+pub struct RuleManager<A: Api> {
+    api: Arc<A>,
     rules: Vec<Box<dyn Rule>>,
 }
 
-impl RuleManager {
-    pub fn new(config: Configuration) -> Self {
+impl<A: Api + 'static> RuleManager<A> {
+    pub fn new(api: A) -> Self {
         RuleManager {
-            config: Arc::new(config),
+            api: Arc::new(api),
             rules: vec![],
         }
     }
@@ -34,11 +34,11 @@ impl RuleManager {
 
         for mut rule in self.rules {
             let event_tx = event_tx.subscribe();
-            let config = self.config.clone();
+            let api = self.api.clone();
             let rule_name = rule.get_name();
             info!("Start rule {rule_name}");
             let rule_id = rules_set
-                .spawn(async move { rule.run(Box::new(ApiClient::new(config)), event_tx).await })
+                .spawn(async move { rule.run(api, event_tx).await })
                 .id();
             info!("Started rule {rule_name} with id={rule_id}");
             rule_task_names.insert(rule_id, rule_name);
@@ -81,7 +81,45 @@ pub trait Rule: Send {
 
     async fn run(
         &mut self,
-        api: Box<dyn Api>,
+        api: Arc<dyn Api>,
         event_receiver: Receiver<Event>,
     ) -> Result<(), Box<dyn std::error::Error + Send>>;
+}
+
+#[cfg(test)]
+mod tests {
+    use hab_rs_api_client::apis::{ApiClient, MockApiClient, configuration::Configuration};
+
+    use super::*;
+
+    struct TestRule;
+
+    #[async_trait]
+    impl Rule for TestRule {
+        fn get_name(&self) -> String {
+            "TestRule".to_string()
+        }
+
+        async fn run(
+            &mut self,
+            _api: Arc<dyn Api>,
+            _event_receiver: Receiver<Event>,
+        ) -> Result<(), Box<dyn std::error::Error + Send>> {
+            Ok(())
+        }
+    }
+
+    #[tokio::test]
+    async fn test_manager() {
+        let mut rule_manager = RuleManager::new(ApiClient::new(Arc::new(Configuration::new())));
+        rule_manager.register(Box::new(TestRule));
+        rule_manager.run().await;
+    }
+
+    #[tokio::test]
+    async fn test_manager_mock() {
+        let mut rule_manager = RuleManager::new(MockApiClient::new());
+        rule_manager.register(Box::new(TestRule));
+        rule_manager.run().await;
+    }
 }
