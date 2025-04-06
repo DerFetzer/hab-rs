@@ -56,3 +56,6 @@ args =[
     "-o", "hab-rs-api-client"
 ]
 dependencies = ["clean-api-client", "preprocess-openapi"]
+
+[tasks.refresh-api-client]
+dependencies = ["generate-api-client", "fix-api-client", "format"]

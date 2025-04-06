@@ -17,7 +17,7 @@ pub enum Error<T> {
     ResponseError(ResponseContent<T>),
 }
 
-impl <T> fmt::Display for Error<T> {
+impl<T> fmt::Display for Error<T> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
             Error::Reqwest(e) => ("reqwest", e.to_string()),
@@ -30,7 +30,7 @@ impl <T> fmt::Display for Error<T> {
     }
 }
 
-impl <T: fmt::Debug> error::Error for Error<T> {
+impl<T: fmt::Debug> error::Error for Error<T> {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         Some(match self {
             Error::Reqwest(e) => e,
@@ -42,7 +42,7 @@ impl <T: fmt::Debug> error::Error for Error<T> {
     }
 }
 
-impl <T> From<reqwest::Error> for Error<T> {
+impl<T> From<reqwest::Error> for Error<T> {
     fn from(e: reqwest::Error) -> Self {
         Error::Reqwest(e)
     }
@@ -54,13 +54,13 @@ impl<T> From<reqwest_middleware::Error> for Error<T> {
     }
 }
 
-impl <T> From<serde_json::Error> for Error<T> {
+impl<T> From<serde_json::Error> for Error<T> {
     fn from(e: serde_json::Error) -> Self {
         Error::Serde(e)
     }
 }
 
-impl <T> From<std::io::Error> for Error<T> {
+impl<T> From<std::io::Error> for Error<T> {
     fn from(e: std::io::Error) -> Self {
         Error::Io(e)
     }
@@ -87,8 +87,10 @@ pub fn parse_deep_object(prefix: &str, value: &serde_json::Value) -> Vec<(String
                             value,
                         ));
                     }
-                },
-                serde_json::Value::String(s) => params.push((format!("{}[{}]", prefix, key), s.clone())),
+                }
+                serde_json::Value::String(s) => {
+                    params.push((format!("{}[{}]", prefix, key), s.clone()))
+                }
                 _ => params.push((format!("{}[{}]", prefix, key), value.to_string())),
             }
         }
@@ -105,7 +107,7 @@ pub fn parse_deep_object(prefix: &str, value: &serde_json::Value) -> Vec<(String
 enum ContentType {
     Json,
     Text,
-    Unsupported(String)
+    Unsupported(String),
 }
 
 impl From<&str> for ContentType {
@@ -228,9 +230,15 @@ impl ApiClient {
             addons_api: Box::new(addons_api::AddonsApiClient::new(configuration.clone())),
             audio_api: Box::new(audio_api::AudioApiClient::new(configuration.clone())),
             auth_api: Box::new(auth_api::AuthApiClient::new(configuration.clone())),
-            channel_types_api: Box::new(channel_types_api::ChannelTypesApiClient::new(configuration.clone())),
-            config_descriptions_api: Box::new(config_descriptions_api::ConfigDescriptionsApiClient::new(configuration.clone())),
-            discovery_api: Box::new(discovery_api::DiscoveryApiClient::new(configuration.clone())),
+            channel_types_api: Box::new(channel_types_api::ChannelTypesApiClient::new(
+                configuration.clone(),
+            )),
+            config_descriptions_api: Box::new(
+                config_descriptions_api::ConfigDescriptionsApiClient::new(configuration.clone()),
+            ),
+            discovery_api: Box::new(discovery_api::DiscoveryApiClient::new(
+                configuration.clone(),
+            )),
             events_api: Box::new(events_api::EventsApiClient::new(configuration.clone())),
             habpanel_api: Box::new(habpanel_api::HabpanelApiClient::new(configuration.clone())),
             iconsets_api: Box::new(iconsets_api::IconsetsApiClient::new(configuration.clone())),
@@ -238,19 +246,33 @@ impl ApiClient {
             items_api: Box::new(items_api::ItemsApiClient::new(configuration.clone())),
             links_api: Box::new(links_api::LinksApiClient::new(configuration.clone())),
             logging_api: Box::new(logging_api::LoggingApiClient::new(configuration.clone())),
-            module_types_api: Box::new(module_types_api::ModuleTypesApiClient::new(configuration.clone())),
-            persistence_api: Box::new(persistence_api::PersistenceApiClient::new(configuration.clone())),
-            profile_types_api: Box::new(profile_types_api::ProfileTypesApiClient::new(configuration.clone())),
+            module_types_api: Box::new(module_types_api::ModuleTypesApiClient::new(
+                configuration.clone(),
+            )),
+            persistence_api: Box::new(persistence_api::PersistenceApiClient::new(
+                configuration.clone(),
+            )),
+            profile_types_api: Box::new(profile_types_api::ProfileTypesApiClient::new(
+                configuration.clone(),
+            )),
             root_api: Box::new(root_api::RootApiClient::new(configuration.clone())),
             rules_api: Box::new(rules_api::RulesApiClient::new(configuration.clone())),
             services_api: Box::new(services_api::ServicesApiClient::new(configuration.clone())),
             sitemaps_api: Box::new(sitemaps_api::SitemapsApiClient::new(configuration.clone())),
-            systeminfo_api: Box::new(systeminfo_api::SysteminfoApiClient::new(configuration.clone())),
+            systeminfo_api: Box::new(systeminfo_api::SysteminfoApiClient::new(
+                configuration.clone(),
+            )),
             tags_api: Box::new(tags_api::TagsApiClient::new(configuration.clone())),
-            templates_api: Box::new(templates_api::TemplatesApiClient::new(configuration.clone())),
-            thing_types_api: Box::new(thing_types_api::ThingTypesApiClient::new(configuration.clone())),
+            templates_api: Box::new(templates_api::TemplatesApiClient::new(
+                configuration.clone(),
+            )),
+            thing_types_api: Box::new(thing_types_api::ThingTypesApiClient::new(
+                configuration.clone(),
+            )),
             things_api: Box::new(things_api::ThingsApiClient::new(configuration.clone())),
-            transformations_api: Box::new(transformations_api::TransformationsApiClient::new(configuration.clone())),
+            transformations_api: Box::new(transformations_api::TransformationsApiClient::new(
+                configuration.clone(),
+            )),
             ui_api: Box::new(ui_api::UiApiClient::new(configuration.clone())),
             uuid_api: Box::new(uuid_api::UuidApiClient::new(configuration.clone())),
             voice_api: Box::new(voice_api::VoiceApiClient::new(configuration.clone())),
@@ -516,4 +538,3 @@ impl Api for MockApiClient {
         &self.voice_api_mock
     }
 }
-
