@@ -1,6 +1,11 @@
 [config]
 default_to_workspace = false
 
+[env]
+CARGO_MAKE_RUN_CHECK_FORMAT = true
+CARGO_MAKE_RUN_CLIPPY = true
+CARGO_MAKE_CLIPPY_ARGS = "${CARGO_MAKE_CLIPPY_ALL_FEATURES_WARN}"
+
 [tasks.clean-api-client]
 script_runner = "@shell"
 script = '''
