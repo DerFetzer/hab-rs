@@ -157,7 +157,7 @@ pub mod configuration;
 
 use std::sync::Arc;
 
-pub trait Api {
+pub trait Api: Send + Sync {
     fn actions_api(&self) -> &dyn actions_api::ActionsApi;
     fn addons_api(&self) -> &dyn addons_api::AddonsApi;
     fn audio_api(&self) -> &dyn audio_api::AudioApi;

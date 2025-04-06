@@ -43,6 +43,10 @@ script = """
 voice_api = readfile "hab-rs-api-client/src/apis/voice_api.rs"
 voice_api = replace ${voice_api} ".as_ref()" ""
 writefile "hab-rs-api-client/src/apis/voice_api.rs" ${voice_api}
+
+apis_mod = readfile "hab-rs-api-client/src/apis/mod.rs"
+apis_mod = replace ${apis_mod} "pub trait Api" "pub trait Api: Send + Sync"
+writefile "hab-rs-api-client/src/apis/mod.rs" ${apis_mod}
 """ 
 dependencies = ["generate-api-client"]
 
