@@ -89,6 +89,7 @@ pub trait Rule: Send {
 #[cfg(test)]
 mod tests {
     use hab_rs_api_client::apis::{ApiClient, MockApiClient, configuration::Configuration};
+    use tracing_test::traced_test;
 
     use super::*;
 
@@ -102,13 +103,15 @@ mod tests {
 
         async fn run(
             &mut self,
-            _api: Arc<dyn Api>,
+            api: Arc<dyn Api>,
             _event_receiver: Receiver<Event>,
         ) -> Result<(), Box<dyn std::error::Error + Send>> {
+            api.items_api().get_item_state1("test_item").await.ok();
             Ok(())
         }
     }
 
+    #[traced_test]
     #[tokio::test]
     async fn test_manager() {
         let mut rule_manager = RuleManager::new(ApiClient::new(Arc::new(Configuration::new())));
@@ -116,10 +119,24 @@ mod tests {
         rule_manager.run().await;
     }
 
+    #[traced_test]
     #[tokio::test]
     async fn test_manager_mock() {
         let mut rule_manager = RuleManager::new(MockApiClient::new());
         rule_manager.register(Box::new(TestRule));
         rule_manager.run().await;
+    }
+
+    #[tokio::test]
+    async fn test_rule_mock() {
+        let (_event_tx, event_rx) = broadcast::channel(1);
+        let mut api = MockApiClient::new();
+        api.items_api_mock
+            .expect_get_item_state1()
+            .with(mockall::predicate::eq("test_item"))
+            .times(1)
+            .returning(|_| Ok(42.to_string()));
+
+        TestRule.run(Arc::new(api), event_rx).await.unwrap();
     }
 }
