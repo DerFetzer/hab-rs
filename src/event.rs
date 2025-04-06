@@ -1,5 +1,6 @@
 use std::str::FromStr;
 
+use chrono::Utc;
 use serde::Deserialize;
 use serde_json::Value;
 use serde_with::DeserializeFromStr;
@@ -8,8 +9,8 @@ use crate::error::HabRsError;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Event {
-    event_type: EventType,
-    data: Value,
+    pub event_type: EventType,
+    pub data: Value,
 }
 
 impl Event {
@@ -41,6 +42,7 @@ impl FromStr for Event {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+#[non_exhaustive]
 pub enum EventType {
     Message,
     Alive,
@@ -64,12 +66,13 @@ impl FromStr for EventType {
 
 #[derive(Debug, PartialEq, Deserialize)]
 pub struct Message {
-    topic: Topic,
+    pub topic: Topic,
     #[serde(flatten)]
-    message_type: MessageType,
+    pub message_type: MessageType,
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
+#[non_exhaustive]
 #[serde(tag = "type", content = "payload")]
 pub enum MessageType {
     #[serde(with = "serde_nested_json")]
@@ -99,52 +102,161 @@ pub enum MessageType {
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
+#[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct StatusInfoEvent {
-    status: String,
-    status_detail: String,
-    description: Option<String>,
+    pub status: String,
+    pub status_detail: String,
+    pub description: Option<String>,
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[non_exhaustive]
 pub struct StateChangedEvent {
-    #[serde(rename = "type")]
-    value_type: String,
-    value: String,
-    old_type: String,
-    old_value: String,
+    #[serde(flatten)]
+    pub value: TypedValue,
+    #[serde(flatten)]
+    pub old_value: TypedOldValue,
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
+#[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct StateUpdatedEvent {
-    #[serde(rename = "type")]
-    value_type: String,
-    value: String,
+    #[serde(flatten)]
+    pub value: TypedValue,
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
+#[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct StatePredictedEvent {
-    predicted_type: String,
-    predicted_value: String,
-    is_confirmation: bool,
+    #[serde(flatten)]
+    pub value: TypedPredictedValue,
+    pub is_confirmation: bool,
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
+#[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct ChannelTriggeredEvent {
-    event: String,
-    channel: String,
+    pub event: String,
+    pub channel: String,
+}
+
+macro_rules! typed_values {
+    ($([$name:ident, $value_name:literal, $value_type_name:literal]),*) => {
+        $(
+            #[derive(Debug, PartialEq, Deserialize)]
+            #[non_exhaustive]
+            #[serde(tag = $value_type_name, content = $value_name)]
+            pub enum $name {
+                Decimal(Decimal),
+                Quantity(Quantity),
+                DateTime(DateTime),
+                OnOff(OnOff),
+                String(String),
+                UnDef(String),
+                Unknown(String),
+            }
+        )*
+    };
+}
+
+typed_values!(
+    [TypedValue, "value", "type"],
+    [TypedOldValue, "oldValue", "oldType"],
+    [TypedPredictedValue, "predictedValue", "predictedType"]
+);
+
+macro_rules! from_typed_values {
+    ([$($name:ident),*]) => {
+        $(
+            impl From<$name> for TypedValue {
+                fn from(value: $name) -> Self {
+                    match value {
+                        $name::Decimal(decimal) => Self::Decimal(decimal),
+                        $name::Quantity(quantity) => Self::Quantity(quantity),
+                        $name::DateTime(date_time) => Self::DateTime(date_time),
+                        $name::OnOff(on_off) => Self::OnOff(on_off),
+                        $name::String(string) => Self::String(string),
+                        $name::UnDef(string) => Self::UnDef(string),
+                        $name::Unknown(string) => Self::Unknown(string),
+                    }
+                }
+            }
+        )*
+    };
+}
+
+from_typed_values!([TypedOldValue, TypedPredictedValue]);
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub struct Decimal(pub f64);
+
+impl FromStr for Decimal {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Self(f64::from_str(s)?))
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub struct Quantity {
+    pub value: f64,
+    pub unit: String,
+}
+
+impl FromStr for Quantity {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.split(" ").collect::<Vec<_>>().as_slice() {
+            [value, unit] => Ok(Self {
+                value: f64::from_str(value)?,
+                unit: unit.to_string(),
+            }),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub struct DateTime(pub chrono::DateTime<Utc>);
+
+impl FromStr for DateTime {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Self(chrono::DateTime::from_str(s)?))
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub enum OnOff {
+    On,
+    Off,
+}
+
+impl FromStr for OnOff {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "ON" => Ok(Self::On),
+            "OFF" => Ok(Self::Off),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, DeserializeFromStr)]
 pub struct Topic {
-    namespace: String,
-    entity_type: String,
-    entity: String,
-    action: String,
+    pub namespace: String,
+    pub entity_type: String,
+    pub entity: String,
+    pub action: String,
 }
 
 impl FromStr for Topic {
@@ -212,10 +324,8 @@ data: {"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\
         assert_eq!(
             message.message_type,
             MessageType::ItemStateChangedEvent(StateChangedEvent {
-                value_type: "Decimal".to_string(),
-                value: "222.23".to_string(),
-                old_type: "Decimal".to_string(),
-                old_value: "225.99".to_string(),
+                value: TypedValue::Decimal(Decimal(222.23)),
+                old_value: TypedOldValue::Decimal(Decimal(225.99))
             })
         );
     }

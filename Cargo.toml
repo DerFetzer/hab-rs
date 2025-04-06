@@ -22,6 +22,7 @@ hab-rs-api-client = { version = "=8.0.0", path = "hab-rs-api-client" }
 
 [dependencies]
 async-trait = "0.1.88"
+chrono = "0.4.40"
 hab-rs-api-client = { workspace = true, features = ["mockall", "bon"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde-nested-json = "0.1.3"
