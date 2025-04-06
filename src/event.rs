@@ -6,7 +6,7 @@ use serde_with::DeserializeFromStr;
 
 use crate::error::HabRsError;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Event {
     event_type: EventType,
     data: Value,
@@ -40,7 +40,7 @@ impl FromStr for Event {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum EventType {
     Message,
     Alive,
