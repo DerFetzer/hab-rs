@@ -1,8 +1,9 @@
-use std::str::FromStr;
+use std::{str::FromStr, sync::LazyLock};
 
 use base64::{Engine, prelude::BASE64_STANDARD};
 use chrono::Utc;
 use palette::Hsv;
+use regex::Regex;
 use serde::Deserialize;
 use serde_json::Value;
 use serde_with::DeserializeFromStr;
@@ -167,6 +168,7 @@ macro_rules! typed_values {
                 NextPrevious(NextPrevious),
                 Hsb(Hsb),
                 String(String),
+                StringList(StringList),
                 UnDef(String),
                 Raw(Raw),
                 Unknown(String),
@@ -203,6 +205,7 @@ macro_rules! from_typed_values {
                         $name::StopMove(stop_move) => Self::StopMove(stop_move),
                         $name::OpenClose(open_close) => Self::OpenClose(open_close),
                         $name::String(string) => Self::String(string),
+                        $name::StringList(string_list) => Self::StringList(string_list),
                         $name::Raw(raw) => Self::Raw(raw),
                         $name::UnDef(string) => Self::UnDef(string),
                         $name::Unknown(string) => Self::Unknown(string),
@@ -301,6 +304,33 @@ impl FromStr for Raw {
             }
             _ => Err(HabRsError::Parse(s.to_string())),
         }
+    }
+}
+
+static DELIMITER_RE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"[^\\],").expect("Invalid regex"));
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub struct StringList(Vec<String>);
+
+impl FromStr for StringList {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let delim_matches: Vec<_> = DELIMITER_RE.find_iter(s).map(|m| m.start() + 1).collect();
+        let mut strings = Vec::with_capacity(delim_matches.len() + 1);
+
+        for i in 0..=delim_matches.len() {
+            let start = if i == 0 { 0 } else { delim_matches[i - 1] + 1 };
+            let end = if i == delim_matches.len() {
+                s.len()
+            } else {
+                delim_matches[i]
+            };
+            strings.push(s[start..end].replace("\\,", ","));
+        }
+
+        Ok(Self(strings))
     }
 }
 
@@ -553,6 +583,20 @@ data: {"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\
                 value: TypedValue::Decimal(Decimal(222.23)),
                 old_value: TypedOldValue::Decimal(Decimal(225.99))
             })
+        );
+    }
+
+    #[test]
+    fn test_string_list() {
+        let s = r"FirstString,Second\,String\,,ThirdString";
+        let string_list = StringList::from_str(s).unwrap();
+        assert_eq!(
+            string_list,
+            StringList(vec![
+                "FirstString".to_string(),
+                "Second,String,".to_string(),
+                "ThirdString".to_string()
+            ])
         );
     }
 }
