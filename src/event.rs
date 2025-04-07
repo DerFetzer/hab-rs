@@ -1,6 +1,8 @@
 use std::str::FromStr;
 
+use base64::{Engine, prelude::BASE64_STANDARD};
 use chrono::Utc;
+use palette::Hsv;
 use serde::Deserialize;
 use serde_json::Value;
 use serde_with::DeserializeFromStr;
@@ -152,12 +154,24 @@ macro_rules! typed_values {
             #[serde(tag = $value_type_name, content = $value_name)]
             pub enum $name {
                 Decimal(Decimal),
+                Percent(Decimal),
                 Quantity(Quantity),
                 DateTime(DateTime),
                 OnOff(OnOff),
+                PlayPause(PlayPause),
+                RewindFastforward(RewindFastforward),
+                StopMove(StopMove),
+                OpenClose(OpenClose),
+                IncreaseDecrease(IncreaseDecrease),
+                UpDown(UpDown),
+                NextPrevious(NextPrevious),
+                Hsb(Hsb),
                 String(String),
                 UnDef(String),
+                Raw(Raw),
                 Unknown(String),
+                #[serde(other)]
+                Unimplemented,
             }
         )*
     };
@@ -176,12 +190,23 @@ macro_rules! from_typed_values {
                 fn from(value: $name) -> Self {
                     match value {
                         $name::Decimal(decimal) => Self::Decimal(decimal),
+                        $name::Percent(decimal) => Self::Percent(decimal),
                         $name::Quantity(quantity) => Self::Quantity(quantity),
+                        $name::IncreaseDecrease(increase_decrease) => Self::IncreaseDecrease(increase_decrease),
+                        $name::UpDown(up_down) => Self::UpDown(up_down),
+                        $name::NextPrevious(next_previous) => Self::NextPrevious(next_previous),
+                        $name::Hsb(color) => Self::Hsb(color),
                         $name::DateTime(date_time) => Self::DateTime(date_time),
                         $name::OnOff(on_off) => Self::OnOff(on_off),
+                        $name::PlayPause(play_pause) => Self::PlayPause(play_pause),
+                        $name::RewindFastforward(rewind_fastforward) => Self::RewindFastforward(rewind_fastforward),
+                        $name::StopMove(stop_move) => Self::StopMove(stop_move),
+                        $name::OpenClose(open_close) => Self::OpenClose(open_close),
                         $name::String(string) => Self::String(string),
+                        $name::Raw(raw) => Self::Raw(raw),
                         $name::UnDef(string) => Self::UnDef(string),
                         $name::Unknown(string) => Self::Unknown(string),
+                        $name::Unimplemented => Self::Unimplemented,
                     }
                 }
             }
@@ -223,6 +248,189 @@ impl FromStr for Quantity {
 }
 
 #[derive(Debug, PartialEq, DeserializeFromStr)]
+pub struct Point {
+    pub latitude: f64,
+    pub longitude: f64,
+    pub altitude: Option<f64>,
+}
+
+impl FromStr for Point {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.split(",").collect::<Vec<_>>().as_slice() {
+            [latitude, longitude] => Ok(Self {
+                latitude: f64::from_str(latitude)?,
+                longitude: f64::from_str(longitude)?,
+                altitude: None,
+            }),
+            [latitude, longitude, altitude] => Ok(Self {
+                latitude: f64::from_str(latitude)?,
+                longitude: f64::from_str(longitude)?,
+                altitude: Some(f64::from_str(altitude)?),
+            }),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub struct Raw {
+    pub mime_type: String,
+    pub data: Vec<u8>,
+}
+
+impl FromStr for Raw {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.split(";").collect::<Vec<_>>().as_slice() {
+            [mime_type, data] if mime_type.starts_with("data:") && data.starts_with("base64,") => {
+                Ok(Self {
+                    mime_type: mime_type
+                        .split_once(":")
+                        .ok_or_else(|| HabRsError::Parse(s.to_string()))?
+                        .1
+                        .to_string(),
+                    data: BASE64_STANDARD.decode(
+                        data.split_once(",")
+                            .ok_or_else(|| HabRsError::Parse(s.to_string()))?
+                            .1,
+                    )?,
+                })
+            }
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub enum IncreaseDecrease {
+    Increase,
+    Decrease,
+}
+
+impl FromStr for IncreaseDecrease {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "INCREASE" => Ok(Self::Increase),
+            "DECREASE" => Ok(Self::Decrease),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub enum NextPrevious {
+    Next,
+    Previous,
+}
+
+impl FromStr for NextPrevious {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "NEXT" => Ok(Self::Next),
+            "PREVIOUS" => Ok(Self::Previous),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub enum PlayPause {
+    Play,
+    Pause,
+}
+
+impl FromStr for PlayPause {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "PLAY" => Ok(Self::Play),
+            "PAUSE" => Ok(Self::Pause),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub enum RewindFastforward {
+    Rewind,
+    Fastforward,
+}
+
+impl FromStr for RewindFastforward {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "REWIND" => Ok(Self::Rewind),
+            "FASTFORWARD" => Ok(Self::Fastforward),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub enum StopMove {
+    Stop,
+    Move,
+}
+
+impl FromStr for StopMove {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "STOP" => Ok(Self::Stop),
+            "MOVE" => Ok(Self::Move),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub enum UpDown {
+    Up,
+    Down,
+}
+
+impl FromStr for UpDown {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "UP" => Ok(Self::Up),
+            "DOWN" => Ok(Self::Down),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub struct Hsb(pub Hsv);
+
+impl FromStr for Hsb {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.split(",").collect::<Vec<_>>().as_slice() {
+            [h, s, b] => Ok(Self(Hsv::new_srgb(
+                f32::from_str(h)?,
+                f32::from_str(s)?,
+                f32::from_str(b)?,
+            ))),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
 pub struct DateTime(pub chrono::DateTime<Utc>);
 
 impl FromStr for DateTime {
@@ -246,6 +454,24 @@ impl FromStr for OnOff {
         match s {
             "ON" => Ok(Self::On),
             "OFF" => Ok(Self::Off),
+            _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, DeserializeFromStr)]
+pub enum OpenClose {
+    Open,
+    Close,
+}
+
+impl FromStr for OpenClose {
+    type Err = HabRsError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "OPEN" => Ok(Self::Open),
+            "CLOSE" => Ok(Self::Close),
             _ => Err(HabRsError::Parse(s.to_string())),
         }
     }

@@ -12,4 +12,6 @@ pub enum HabRsError {
     ParseDateTime(#[from] chrono::format::ParseError),
     #[error("json error")]
     Json(#[from] serde_json::Error),
+    #[error("could not decode as base64: {0}")]
+    Base64(#[from] base64::DecodeError),
 }

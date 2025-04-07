@@ -23,9 +23,11 @@ hab-rs-api-client = { version = "=8.0.0", path = "hab-rs-api-client" }
 
 [dependencies]
 async-trait = "0.1.88"
+base64 = "0.22.1"
 chrono = "0.4.40"
 futures-util = "0.3.31"
 hab-rs-api-client = { workspace = true }
+palette = { version = "0.7.6", features = ["serializing"] }
 reqwest = { version = "0.12.15", features = ["stream"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde-nested-json = "0.1.3"
