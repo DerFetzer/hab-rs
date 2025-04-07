@@ -1,0 +1,8 @@
+templateDir: res/templates
+files:
+  "reqwest-trait/api_mod.mustache":
+    templateType: SupportingFiles
+    destinationFilename: src/apis/mod.rs
+  "Cargo.mustache":
+    templateType: SupportingFiles
+    destinationFilename: Cargo.toml

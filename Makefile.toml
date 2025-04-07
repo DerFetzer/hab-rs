@@ -61,6 +61,7 @@ args =[
     "generate", 
     "-i", "res/openhab_api_spec_pre.json",
     "-g", "rust",
+    "-c", "res/openapi_generator_config.yaml",
     "-p", "packageName=hab-rs-api-client,library=reqwest-trait,bestFitInt=true,mockall=true,preferUnsignedInt=true,supportMiddleware=true,topLevelApiClient=true",
     "-o", "hab-rs-api-client"
 ]
