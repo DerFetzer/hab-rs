@@ -518,7 +518,6 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "chrono",
- "clap",
  "futures-util",
  "hab-rs-api-client",
  "mockall",
@@ -530,7 +529,6 @@ dependencies = [
  "thiserror 2.0.12",
  "tokio",
  "tracing",
- "tracing-subscriber",
  "tracing-test",
 ]
 
@@ -964,6 +962,18 @@ checksum = "f7c44f8e672c00fe5308fa235f821cb4198414e1c77935c1ab6948d3fd78550e"
 dependencies = [
  "mime",
  "unicase",
+]
+
+[[package]]
+name = "minimal"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "clap",
+ "hab-rs",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
