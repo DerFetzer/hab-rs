@@ -108,14 +108,13 @@ mockall = ["dep:mockall"]
 bon = ["dep:bon"]
 {{/useBonBuilder}}
 
-# Api features
 {{#apiInfo}}
 {{#apis}}
 {{{classFilename}}} = []
 {{/apis}}
 {{/apiInfo}}
 
-# Top-level features
+## Api features
 {{#apiInfo}}
 {{#apis}}
 # {{{classFilename}}} = ["hab-rs-api-client/{{{classFilename}}}"]

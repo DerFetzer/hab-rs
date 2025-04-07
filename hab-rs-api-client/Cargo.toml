@@ -23,7 +23,6 @@ native-tls = ["reqwest/native-tls"]
 rustls = ["reqwest/rustls-tls"]
 mockall = ["dep:mockall"]
 
-# Api features
 actions_api = []
 addons_api = []
 audio_api = []
@@ -55,7 +54,7 @@ ui_api = []
 uuid_api = []
 voice_api = []
 
-# Top-level features
+## Api features
 # actions_api = ["hab-rs-api-client/actions_api"]
 # addons_api = ["hab-rs-api-client/addons_api"]
 # audio_api = ["hab-rs-api-client/audio_api"]

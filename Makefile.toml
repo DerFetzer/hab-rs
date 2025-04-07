@@ -48,10 +48,25 @@ script = """
 voice_api = readfile "hab-rs-api-client/src/apis/voice_api.rs"
 voice_api = replace ${voice_api} ".as_ref()" ""
 writefile "hab-rs-api-client/src/apis/voice_api.rs" ${voice_api}
+""" 
+dependencies = ["generate-api-client"]
 
-apis_mod = readfile "hab-rs-api-client/src/apis/mod.rs"
-apis_mod = replace ${apis_mod} "pub trait Api" "pub trait Api: Send + Sync"
-writefile "hab-rs-api-client/src/apis/mod.rs" ${apis_mod}
+[tasks.copy-features]
+script_runner = "@duckscript"
+script = """
+api_cargo_toml = readfile "hab-rs-api-client/Cargo.toml"
+cargo_toml = readfile "Cargo.toml"
+cargo_toml_features_start = last_indexof ${cargo_toml} "# Api features" 
+
+cargo_toml = substring ${cargo_toml} 0 ${cargo_toml_features_start}
+
+api_features_start = last_indexof ${api_cargo_toml} "# Api features"
+api_features = substring ${api_cargo_toml} ${api_features_start}
+api_features = replace ${api_features} "# " ""
+
+cargo_toml = concat  ${cargo_toml} "# " ${api_features}
+ 
+writefile "Cargo.toml" ${cargo_toml}
 """ 
 dependencies = ["generate-api-client"]
 
@@ -68,4 +83,4 @@ args =[
 dependencies = ["clean-api-client", "preprocess-openapi"]
 
 [tasks.refresh-api-client]
-dependencies = ["generate-api-client", "fix-api-client", "format"]
+dependencies = ["generate-api-client", "fix-api-client", "copy-features", "format"]
