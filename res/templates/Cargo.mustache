@@ -1,35 +1,13 @@
 [package]
 name = "{{{packageName}}}"
-version = "{{#lambdaVersion}}{{{packageVersion}}}{{/lambdaVersion}}"
-{{#infoEmail}}
-authors = ["{{{.}}}"]
-{{/infoEmail}}
-{{^infoEmail}}
-authors = ["OpenAPI Generator team and contributors"]
-{{/infoEmail}}
-{{#appDescription}}
-description = "{{{.}}}"
-{{/appDescription}}
-{{#licenseInfo}}
-license = "{{.}}"
-{{/licenseInfo}}
-{{^licenseInfo}}
-# Override this license by providing a License Object in the OpenAPI.
-license = "Unlicense"
-{{/licenseInfo}}
-edition = "2021"
-{{#publishRustRegistry}}
-publish = ["{{.}}"]
-{{/publishRustRegistry}}
-{{#repositoryUrl}}
-repository = "{{.}}"
-{{/repositoryUrl}}
-{{#documentationUrl}}
-documentation = "{{.}}"
-{{/documentationUrl}}
-{{#homePageUrl}}
-homepage = "{{.}}"
-{{/homePageUrl}}
+description = "Bindings for openHAB REST API"
+categories = ["api-bindings"]
+
+version.workspace = true
+license.workspace = true
+edition.workspace = true
+authors.workspace = true
+repository.workspace = true
 
 [dependencies]
 serde = { version = "^1.0", features = ["derive"] }
