@@ -405,7 +405,19 @@ impl {{classname}} for {{classname}}Client {
         {{/isMultipart}}
         {{#hasBodyParam}}
         {{#bodyParams}}
+        {{#isString}}
+        {{^required}}
+        if let Some({{paramName}}) = {{paramName}} {
+            local_var_req_builder = local_var_req_builder.body({{{paramName}}}.to_string());
+        }
+        {{/required}}
+        {{#required}}
+        local_var_req_builder = local_var_req_builder.body({{{paramName}}}.to_string());
+        {{/required}}
+        {{/isString}}
+        {{^isString}}
         local_var_req_builder = local_var_req_builder.json(&{{{paramName}}});
+        {{/isString}}
         {{/bodyParams}}
         {{/hasBodyParam}}
 

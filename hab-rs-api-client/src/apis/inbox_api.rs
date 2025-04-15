@@ -117,7 +117,9 @@ impl InboxApi for InboxApiClient {
         if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
             local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
         };
-        local_var_req_builder = local_var_req_builder.json(&body);
+        if let Some(body) = body {
+            local_var_req_builder = local_var_req_builder.body(body.to_string());
+        }
 
         let local_var_req = local_var_req_builder.build()?;
         let local_var_resp = local_var_client.execute(local_var_req).await?;
