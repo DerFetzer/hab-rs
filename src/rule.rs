@@ -28,6 +28,8 @@ impl RuleManager {
     }
 
     pub fn register(&mut self, rule: Box<dyn Rule>) {
+        let rule_name = rule.get_name();
+        info!("Register rule {rule_name}");
         self.rules.push(rule);
     }
 
