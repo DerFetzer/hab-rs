@@ -1,5 +1,6 @@
 pub mod error;
 pub mod event;
+pub mod item;
 pub mod rule;
 
 pub use hab_rs_api_client::apis as rest_api;
