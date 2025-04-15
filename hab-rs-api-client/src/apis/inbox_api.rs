@@ -119,6 +119,10 @@ impl InboxApi for InboxApiClient {
         };
         if let Some(body) = body {
             local_var_req_builder = local_var_req_builder.body(body.to_string());
+            local_var_req_builder = local_var_req_builder.header(
+                reqwest::header::CONTENT_TYPE,
+                reqwest::header::HeaderValue::from_static("text/plain"),
+            );
         }
 
         let local_var_req = local_var_req_builder.build()?;

@@ -406,6 +406,10 @@ impl VoiceApi for VoiceApiClient {
                 local_var_req_builder.header("Accept-Language", local_var_param_value.to_string());
         }
         local_var_req_builder = local_var_req_builder.body(body.to_string());
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::CONTENT_TYPE,
+            reqwest::header::HeaderValue::from_static("text/plain"),
+        );
 
         let local_var_req = local_var_req_builder.build()?;
         let local_var_resp = local_var_client.execute(local_var_req).await?;
@@ -463,6 +467,10 @@ impl VoiceApi for VoiceApiClient {
                 local_var_req_builder.header("Accept-Language", local_var_param_value.to_string());
         }
         local_var_req_builder = local_var_req_builder.body(body.to_string());
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::CONTENT_TYPE,
+            reqwest::header::HeaderValue::from_static("text/plain"),
+        );
 
         let local_var_req = local_var_req_builder.build()?;
         let local_var_resp = local_var_client.execute(local_var_req).await?;
@@ -771,6 +779,10 @@ impl VoiceApi for VoiceApiClient {
                 .header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
         }
         local_var_req_builder = local_var_req_builder.body(body.to_string());
+        local_var_req_builder = local_var_req_builder.header(
+            reqwest::header::CONTENT_TYPE,
+            reqwest::header::HeaderValue::from_static("text/plain"),
+        );
 
         let local_var_req = local_var_req_builder.build()?;
         let local_var_resp = local_var_client.execute(local_var_req).await?;
