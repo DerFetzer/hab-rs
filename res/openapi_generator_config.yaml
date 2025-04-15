@@ -3,6 +3,9 @@ files:
   "reqwest-trait/api_mod.mustache":
     templateType: SupportingFiles
     destinationFilename: src/apis/mod.rs
+  "reqwest-trait/api.mustache":
+    templateType: API
+    destinationFilename: ".rs"
   "Cargo.mustache":
     templateType: SupportingFiles
     destinationFilename: Cargo.toml
