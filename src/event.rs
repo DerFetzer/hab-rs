@@ -17,11 +17,11 @@ pub struct Event {
 }
 
 impl Event {
-    pub fn into_message(self) -> Option<Result<Message, HabRsError>> {
+    pub fn into_message(self) -> Result<Option<Message>, HabRsError> {
         if self.event_type != EventType::Message {
-            None
+            Ok(None)
         } else {
-            Some(serde_json::from_value(self.data).map_err(|e| e.into()))
+            Ok(Some(serde_json::from_value(self.data)?))
         }
     }
 }
@@ -67,14 +67,24 @@ impl FromStr for EventType {
     }
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 pub struct Message {
     pub topic: Topic,
     #[serde(flatten)]
     pub message_type: MessageType,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+impl Message {
+    pub fn get_message_type_for_entity(&self, entity: &str) -> Option<&MessageType> {
+        if self.topic.entity == entity {
+            Some(&self.message_type)
+        } else {
+            None
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 #[serde(tag = "type", content = "payload")]
 pub enum MessageType {
@@ -104,7 +114,7 @@ pub enum MessageType {
     Unknown,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct StatusInfoEvent {
@@ -113,7 +123,7 @@ pub struct StatusInfoEvent {
     pub description: Option<String>,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 pub struct StateChangedEvent {
     #[serde(flatten)]
@@ -122,7 +132,7 @@ pub struct StateChangedEvent {
     pub old_value: TypedOldValue,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct StateUpdatedEvent {
@@ -130,7 +140,7 @@ pub struct StateUpdatedEvent {
     pub value: TypedValue,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct StatePredictedEvent {
@@ -139,7 +149,7 @@ pub struct StatePredictedEvent {
     pub is_confirmation: bool,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct ChannelTriggeredEvent {
@@ -150,7 +160,7 @@ pub struct ChannelTriggeredEvent {
 macro_rules! typed_values {
     ($([$name:ident, $value_name:literal, $value_type_name:literal]),*) => {
         $(
-            #[derive(Debug, PartialEq, Deserialize)]
+            #[derive(Debug, PartialEq, Deserialize, Clone)]
             #[non_exhaustive]
             #[serde(tag = $value_type_name, content = $value_name)]
             pub enum $name {
@@ -219,7 +229,7 @@ macro_rules! from_typed_values {
 
 from_typed_values!([TypedOldValue, TypedPredictedValue]);
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub struct Decimal(pub f64);
 
 impl FromStr for Decimal {
@@ -230,7 +240,7 @@ impl FromStr for Decimal {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Clone, PartialEq, DeserializeFromStr)]
 pub struct Quantity {
     pub value: f64,
     pub unit: String,
@@ -250,7 +260,7 @@ impl FromStr for Quantity {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub struct Point {
     pub latitude: f64,
     pub longitude: f64,
@@ -277,7 +287,7 @@ impl FromStr for Point {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Clone, PartialEq, DeserializeFromStr)]
 pub struct Raw {
     pub mime_type: String,
     pub data: Vec<u8>,
@@ -310,7 +320,7 @@ impl FromStr for Raw {
 static DELIMITER_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"[^\\],").expect("Invalid regex"));
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Clone, PartialEq, DeserializeFromStr)]
 pub struct StringList(Vec<String>);
 
 impl FromStr for StringList {
@@ -334,7 +344,7 @@ impl FromStr for StringList {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum IncreaseDecrease {
     Increase,
     Decrease,
@@ -352,7 +362,7 @@ impl FromStr for IncreaseDecrease {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum NextPrevious {
     Next,
     Previous,
@@ -370,7 +380,7 @@ impl FromStr for NextPrevious {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum PlayPause {
     Play,
     Pause,
@@ -388,7 +398,7 @@ impl FromStr for PlayPause {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum RewindFastforward {
     Rewind,
     Fastforward,
@@ -406,7 +416,7 @@ impl FromStr for RewindFastforward {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum StopMove {
     Stop,
     Move,
@@ -424,7 +434,7 @@ impl FromStr for StopMove {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum UpDown {
     Up,
     Down,
@@ -442,7 +452,7 @@ impl FromStr for UpDown {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub struct Hsb(pub Hsv);
 
 impl FromStr for Hsb {
@@ -460,7 +470,7 @@ impl FromStr for Hsb {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub struct DateTime(pub chrono::DateTime<Utc>);
 
 impl FromStr for DateTime {
@@ -471,7 +481,7 @@ impl FromStr for DateTime {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum OnOff {
     On,
     Off,
@@ -489,7 +499,7 @@ impl FromStr for OnOff {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum OpenClose {
     Open,
     Close,
@@ -507,7 +517,7 @@ impl FromStr for OpenClose {
     }
 }
 
-#[derive(Debug, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Clone, PartialEq, DeserializeFromStr)]
 pub struct Topic {
     pub namespace: String,
     pub entity_type: String,
