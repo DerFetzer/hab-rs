@@ -48,9 +48,14 @@ tracing = "0.1.41"
 hab-rs-api-client = { workspace = true, features = ["mockall"] }
 tracing-test = "0.2.5"
 mockall = "0.13.1"
-testcontainers = {version = "0.23.3", features = ["watchdog"] }
 rstest = "0.25.0"
 paste = "1.0.15"
+
+[target.'cfg(windows)'.dev-dependencies]
+testcontainers = { version = "0.23.3" }
+
+[target.'cfg(not(windows))'.dev-dependencies]
+testcontainers = { version = "0.23.3", features = ["watchdog"] }
 
 [features]
 default = ["items_api"]
