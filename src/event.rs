@@ -1,7 +1,7 @@
 use std::{fmt::Display, str::FromStr, sync::LazyLock};
 
 use base64::{Engine, prelude::BASE64_STANDARD};
-use chrono::{SecondsFormat, Utc};
+use chrono::FixedOffset;
 use palette::Hsv;
 use regex::Regex;
 use serde::Deserialize;
@@ -23,6 +23,18 @@ impl Event {
         } else {
             Ok(Some(serde_json::from_value(self.data)?))
         }
+    }
+
+    pub fn into_message_type_for_entity(
+        self,
+        entity: &str,
+    ) -> Result<Option<MessageType>, HabRsError> {
+        self.into_message()
+            .map(|m| m.and_then(|m| m.into_message_type_for_entity(entity)))
+    }
+
+    pub fn into_message_type(self) -> Result<Option<MessageType>, HabRsError> {
+        self.into_message().map(|m| m.map(|m| m.message_type))
     }
 }
 
@@ -78,6 +90,14 @@ impl Message {
     pub fn get_message_type_for_entity(&self, entity: &str) -> Option<&MessageType> {
         if self.topic.entity == entity {
             Some(&self.message_type)
+        } else {
+            None
+        }
+    }
+
+    pub fn into_message_type_for_entity(self, entity: &str) -> Option<MessageType> {
+        if self.topic.entity == entity {
+            Some(self.message_type)
         } else {
             None
         }
@@ -172,11 +192,13 @@ macro_rules! typed_values {
                 PlayPause(PlayPause),
                 RewindFastforward(RewindFastforward),
                 StopMove(StopMove),
-                OpenClose(OpenClose),
+                OpenClosed(OpenClosed),
                 IncreaseDecrease(IncreaseDecrease),
                 UpDown(UpDown),
                 NextPrevious(NextPrevious),
+                #[serde(rename = "HSB")]
                 Hsb(Hsb),
+                Point(Point),
                 String(String),
                 StringList(StringList),
                 UnDef(String),
@@ -184,6 +206,33 @@ macro_rules! typed_values {
                 Unknown(String),
                 #[serde(other)]
                 Unimplemented,
+            }
+
+            impl Display for $name {
+                fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                    match self {
+                        $name::Decimal(decimal) => decimal.fmt(f),
+                        $name::Percent(decimal) => decimal.fmt(f),
+                        $name::Quantity(quantity) => quantity.fmt(f),
+                        $name::IncreaseDecrease(increase_decrease) => increase_decrease.fmt(f),
+                        $name::UpDown(up_down) => up_down.fmt(f),
+                        $name::NextPrevious(next_previous) => next_previous.fmt(f),
+                        $name::Hsb(color) => color.fmt(f),
+                        $name::Point(point) => point.fmt(f),
+                        $name::DateTime(date_time) => date_time.fmt(f),
+                        $name::OnOff(on_off) => on_off.fmt(f),
+                        $name::PlayPause(play_pause) => play_pause.fmt(f),
+                        $name::RewindFastforward(rewind_fastforward) => rewind_fastforward.fmt(f),
+                        $name::StopMove(stop_move) => stop_move.fmt(f),
+                        $name::OpenClosed(open_closed) => open_closed.fmt(f),
+                        $name::String(string) => string.fmt(f),
+                        $name::StringList(string_list) => string_list.fmt(f),
+                        $name::Raw(raw) => raw.fmt(f),
+                        $name::UnDef(string) => string.fmt(f),
+                        $name::Unknown(string) => string.fmt(f),
+                        $name::Unimplemented => write!(f, "Unimplemented"),
+                    }
+                }
             }
         )*
     };
@@ -208,12 +257,13 @@ macro_rules! from_typed_values {
                         $name::UpDown(up_down) => Self::UpDown(up_down),
                         $name::NextPrevious(next_previous) => Self::NextPrevious(next_previous),
                         $name::Hsb(color) => Self::Hsb(color),
+                        $name::Point(point) => Self::Point(point),
                         $name::DateTime(date_time) => Self::DateTime(date_time),
                         $name::OnOff(on_off) => Self::OnOff(on_off),
                         $name::PlayPause(play_pause) => Self::PlayPause(play_pause),
                         $name::RewindFastforward(rewind_fastforward) => Self::RewindFastforward(rewind_fastforward),
                         $name::StopMove(stop_move) => Self::StopMove(stop_move),
-                        $name::OpenClose(open_close) => Self::OpenClose(open_close),
+                        $name::OpenClosed(open_closed) => Self::OpenClosed(open_closed),
                         $name::String(string) => Self::String(string),
                         $name::StringList(string_list) => Self::StringList(string_list),
                         $name::Raw(raw) => Self::Raw(raw),
@@ -562,7 +612,7 @@ impl FromStr for Hsb {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.split(",").collect::<Vec<_>>().as_slice() {
             [h, s, b] => Ok(Self(Hsv::new_srgb(
-                f32::from_str(h)? - 180.0,
+                f32::from_str(h)?,
                 f32::from_str(s)? / 100.0,
                 f32::from_str(b)? / 100.0,
             ))),
@@ -584,7 +634,7 @@ impl Display for Hsb {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
-pub struct DateTime(pub chrono::DateTime<Utc>);
+pub struct DateTime(pub chrono::DateTime<FixedOffset>);
 
 impl FromStr for DateTime {
     type Err = HabRsError;
@@ -596,7 +646,7 @@ impl FromStr for DateTime {
 
 impl Display for DateTime {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0.to_rfc3339_opts(SecondsFormat::Millis, true))
+        write!(f, "{}", self.0.format("%Y-%m-%dT%H:%M:%S%.3f%z"))
     }
 }
 
@@ -628,28 +678,28 @@ impl Display for OnOff {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
-pub enum OpenClose {
+pub enum OpenClosed {
     Open,
-    Close,
+    Closed,
 }
 
-impl FromStr for OpenClose {
+impl FromStr for OpenClosed {
     type Err = HabRsError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "OPEN" => Ok(Self::Open),
-            "CLOSE" => Ok(Self::Close),
+            "CLOSED" => Ok(Self::Closed),
             _ => Err(HabRsError::Parse(s.to_string())),
         }
     }
 }
 
-impl Display for OpenClose {
+impl Display for OpenClosed {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Open => write!(f, "OPEN"),
-            Self::Close => write!(f, "CLOSE"),
+            Self::Closed => write!(f, "CLOSED"),
         }
     }
 }
@@ -782,5 +832,5 @@ data: {"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\
     enum_test!(Play, Pause);
     enum_test!(Rewind, Fastforward);
     enum_test!(Stop, Move);
-    enum_test!(Open, Close);
+    enum_test!(Open, Closed);
 }
