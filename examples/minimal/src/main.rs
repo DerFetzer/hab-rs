@@ -31,7 +31,7 @@ impl Rule for TestRule {
     ) -> Result<(), Box<dyn std::error::Error + Send>> {
         while let Ok(event) = event_receiver.recv().await {
             info!("Got event: {event:?}");
-            if let Some(Ok(message)) = event.into_message() {
+            if let Ok(Some(message)) = event.into_message() {
                 info!("Event is message: {message:?}");
             }
             api.items_api().get_item_state1("test_item").await.ok();
