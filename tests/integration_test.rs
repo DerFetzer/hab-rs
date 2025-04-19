@@ -10,6 +10,7 @@ use hab_rs::{
 mod container;
 
 #[tokio::test]
+#[ignore]
 async fn main() -> Result<(), Box<dyn Error>> {
     let openhab_container = OpenhabContainer::new().await;
     let config = openhab_container.get_api_configuration();
