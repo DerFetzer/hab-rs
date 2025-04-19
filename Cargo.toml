@@ -46,7 +46,7 @@ tracing = "0.1.41"
 
 [dev-dependencies]
 hab-rs-api-client = { workspace = true, features = ["mockall"] }
-tracing-test = "0.2.5"
+tracing-test = { version = "0.2.5", features = ["no-env-filter"] }
 mockall = "0.13.1"
 rstest = "0.25.0"
 paste = "1.0.15"
