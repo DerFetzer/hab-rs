@@ -4,9 +4,9 @@ use base64::{Engine, prelude::BASE64_STANDARD};
 use chrono::FixedOffset;
 use palette::Hsv;
 use regex::Regex;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use serde_with::DeserializeFromStr;
+use serde_with::{DeserializeFromStr, SerializeDisplay};
 
 use crate::error::HabRsError;
 
@@ -79,7 +79,7 @@ impl FromStr for EventType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Message {
     pub topic: Topic,
     #[serde(flatten)]
@@ -104,7 +104,7 @@ impl Message {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[non_exhaustive]
 #[serde(tag = "type", content = "payload")]
 pub enum MessageType {
@@ -134,7 +134,7 @@ pub enum MessageType {
     Unknown,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct StatusInfoEvent {
@@ -143,7 +143,7 @@ pub struct StatusInfoEvent {
     pub description: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 pub struct StateChangedEvent {
     #[serde(flatten)]
@@ -152,7 +152,7 @@ pub struct StateChangedEvent {
     pub old_value: TypedOldValue,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct StateUpdatedEvent {
@@ -160,7 +160,7 @@ pub struct StateUpdatedEvent {
     pub value: TypedValue,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct StatePredictedEvent {
@@ -169,7 +169,7 @@ pub struct StatePredictedEvent {
     pub is_confirmation: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
 pub struct ChannelTriggeredEvent {
@@ -180,7 +180,7 @@ pub struct ChannelTriggeredEvent {
 macro_rules! typed_values {
     ($([$name:ident, $value_name:literal, $value_type_name:literal]),*) => {
         $(
-            #[derive(Debug, PartialEq, Deserialize, Clone)]
+            #[derive(Debug, PartialEq, Deserialize, Serialize, Clone, Default)]
             #[non_exhaustive]
             #[serde(tag = $value_type_name, content = $value_name)]
             pub enum $name {
@@ -205,6 +205,7 @@ macro_rules! typed_values {
                 Raw(Raw),
                 Unknown(String),
                 #[serde(other)]
+                #[default]
                 Unimplemented,
             }
 
@@ -279,7 +280,7 @@ macro_rules! from_typed_values {
 
 from_typed_values!([TypedOldValue, TypedPredictedValue]);
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Decimal(pub f64);
 
 impl FromStr for Decimal {
@@ -296,7 +297,7 @@ impl Display for Decimal {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Quantity {
     pub value: f64,
     pub unit: String,
@@ -322,7 +323,7 @@ impl Display for Quantity {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Point {
     pub latitude: f64,
     pub longitude: f64,
@@ -359,7 +360,7 @@ impl Display for Point {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Raw {
     pub mime_type: String,
     pub data: Vec<u8>,
@@ -403,7 +404,7 @@ impl Display for Raw {
 static DELIMITER_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"[^\\],").expect("Invalid regex"));
 
-#[derive(Debug, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct StringList(Vec<String>);
 
 impl FromStr for StringList {
@@ -441,8 +442,9 @@ impl Display for StringList {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum IncreaseDecrease {
+    #[default]
     Increase,
     Decrease,
 }
@@ -468,8 +470,9 @@ impl Display for IncreaseDecrease {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum NextPrevious {
+    #[default]
     Next,
     Previous,
 }
@@ -495,8 +498,9 @@ impl Display for NextPrevious {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum PlayPause {
+    #[default]
     Play,
     Pause,
 }
@@ -522,8 +526,9 @@ impl Display for PlayPause {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum RewindFastforward {
+    #[default]
     Rewind,
     Fastforward,
 }
@@ -549,8 +554,9 @@ impl Display for RewindFastforward {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum StopMove {
+    #[default]
     Stop,
     Move,
 }
@@ -576,8 +582,9 @@ impl Display for StopMove {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum UpDown {
+    #[default]
     Up,
     Down,
 }
@@ -603,7 +610,7 @@ impl Display for UpDown {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Hsb(pub Hsv);
 
 impl FromStr for Hsb {
@@ -633,7 +640,7 @@ impl Display for Hsb {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct DateTime(pub chrono::DateTime<FixedOffset>);
 
 impl FromStr for DateTime {
@@ -650,8 +657,9 @@ impl Display for DateTime {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum OnOff {
+    #[default]
     On,
     Off,
 }
@@ -677,8 +685,9 @@ impl Display for OnOff {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum OpenClosed {
+    #[default]
     Open,
     Closed,
 }
@@ -704,7 +713,7 @@ impl Display for OpenClosed {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, DeserializeFromStr)]
+#[derive(Debug, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Topic {
     pub namespace: String,
     pub entity_type: String,
