@@ -8,7 +8,7 @@ use testcontainers::{
 };
 
 pub struct OpenhabContainer {
-    container: ContainerAsync<GenericImage>,
+    _container: ContainerAsync<GenericImage>,
     api_token: String,
 }
 
@@ -16,7 +16,7 @@ impl OpenhabContainer {
     pub async fn new() -> OpenhabContainer {
         let container = GenericImage::new("openhab/openhab", "4.3.4-alpine")
             .with_wait_for(WaitFor::Duration {
-                length: Duration::from_secs(40),
+                length: Duration::from_secs(20),
             })
             .with_mapped_port(8080, 8080.tcp())
             .with_startup_timeout(Duration::from_secs(120))
@@ -55,7 +55,7 @@ impl OpenhabContainer {
             .expect("No command output")
             .to_string();
         OpenhabContainer {
-            container,
+            _container: container,
             api_token,
         }
     }
