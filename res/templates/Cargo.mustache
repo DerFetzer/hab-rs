@@ -2,8 +2,8 @@
 name = "{{{packageName}}}"
 description = "Bindings for openHAB REST API"
 categories = ["api-bindings"]
+version = "0.2.0"
 
-version.workspace = true
 license.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -76,7 +76,7 @@ bon = { version = "2.3", optional = true }
 {{/useBonBuilder}}
 
 [features]
-default = ["native-tls", "items_api"]
+default = ["items_api"]
 native-tls = ["reqwest/native-tls"]
 rustls = ["reqwest/rustls-tls"]
 {{#mockall}}
