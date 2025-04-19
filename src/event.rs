@@ -1,7 +1,7 @@
-use std::{str::FromStr, sync::LazyLock};
+use std::{fmt::Display, str::FromStr, sync::LazyLock};
 
 use base64::{Engine, prelude::BASE64_STANDARD};
-use chrono::Utc;
+use chrono::{SecondsFormat, Utc};
 use palette::Hsv;
 use regex::Regex;
 use serde::Deserialize;
@@ -240,6 +240,12 @@ impl FromStr for Decimal {
     }
 }
 
+impl Display for Decimal {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, DeserializeFromStr)]
 pub struct Quantity {
     pub value: f64,
@@ -257,6 +263,12 @@ impl FromStr for Quantity {
             }),
             _ => Err(HabRsError::Parse(s.to_string())),
         }
+    }
+}
+
+impl Display for Quantity {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {}", self.value, self.unit)
     }
 }
 
@@ -284,6 +296,16 @@ impl FromStr for Point {
             }),
             _ => Err(HabRsError::Parse(s.to_string())),
         }
+    }
+}
+
+impl Display for Point {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{},{}", self.latitude, self.longitude)?;
+        if let Some(altitude) = &self.altitude {
+            write!(f, ",{}", altitude)?;
+        }
+        Ok(())
     }
 }
 
@@ -317,6 +339,17 @@ impl FromStr for Raw {
     }
 }
 
+impl Display for Raw {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "data:{};base64,{}",
+            self.mime_type,
+            BASE64_STANDARD.encode(&self.data)
+        )
+    }
+}
+
 static DELIMITER_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"[^\\],").expect("Invalid regex"));
 
@@ -344,6 +377,20 @@ impl FromStr for StringList {
     }
 }
 
+impl Display for StringList {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            self.0
+                .iter()
+                .map(|s| s.replace(",", "\\,"))
+                .collect::<Vec<_>>()
+                .join(",")
+        )
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum IncreaseDecrease {
     Increase,
@@ -358,6 +405,15 @@ impl FromStr for IncreaseDecrease {
             "INCREASE" => Ok(Self::Increase),
             "DECREASE" => Ok(Self::Decrease),
             _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+impl Display for IncreaseDecrease {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Increase => write!(f, "INCREASE"),
+            Self::Decrease => write!(f, "DECREASE"),
         }
     }
 }
@@ -380,6 +436,15 @@ impl FromStr for NextPrevious {
     }
 }
 
+impl Display for NextPrevious {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Next => write!(f, "NEXT"),
+            Self::Previous => write!(f, "PREVIOUS"),
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum PlayPause {
     Play,
@@ -394,6 +459,15 @@ impl FromStr for PlayPause {
             "PLAY" => Ok(Self::Play),
             "PAUSE" => Ok(Self::Pause),
             _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+impl Display for PlayPause {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Play => write!(f, "PLAY"),
+            Self::Pause => write!(f, "PAUSE"),
         }
     }
 }
@@ -416,6 +490,15 @@ impl FromStr for RewindFastforward {
     }
 }
 
+impl Display for RewindFastforward {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Rewind => write!(f, "REWIND"),
+            Self::Fastforward => write!(f, "FASTFORWARD"),
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum StopMove {
     Stop,
@@ -430,6 +513,15 @@ impl FromStr for StopMove {
             "STOP" => Ok(Self::Stop),
             "MOVE" => Ok(Self::Move),
             _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+impl Display for StopMove {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Stop => write!(f, "STOP"),
+            Self::Move => write!(f, "MOVE"),
         }
     }
 }
@@ -452,6 +544,15 @@ impl FromStr for UpDown {
     }
 }
 
+impl Display for UpDown {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Up => write!(f, "UP"),
+            Self::Down => write!(f, "DOWN"),
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub struct Hsb(pub Hsv);
 
@@ -461,12 +562,24 @@ impl FromStr for Hsb {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.split(",").collect::<Vec<_>>().as_slice() {
             [h, s, b] => Ok(Self(Hsv::new_srgb(
-                f32::from_str(h)?,
-                f32::from_str(s)?,
-                f32::from_str(b)?,
+                f32::from_str(h)? - 180.0,
+                f32::from_str(s)? / 100.0,
+                f32::from_str(b)? / 100.0,
             ))),
             _ => Err(HabRsError::Parse(s.to_string())),
         }
+    }
+}
+
+impl Display for Hsb {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{},{},{}",
+            self.0.hue.into_positive_degrees(),
+            self.0.saturation * 100.0,
+            self.0.value * 100.0
+        )
     }
 }
 
@@ -478,6 +591,12 @@ impl FromStr for DateTime {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(Self(chrono::DateTime::from_str(s)?))
+    }
+}
+
+impl Display for DateTime {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0.to_rfc3339_opts(SecondsFormat::Millis, true))
     }
 }
 
@@ -499,6 +618,15 @@ impl FromStr for OnOff {
     }
 }
 
+impl Display for OnOff {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::On => write!(f, "ON"),
+            Self::Off => write!(f, "OFF"),
+        }
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr)]
 pub enum OpenClose {
     Open,
@@ -513,6 +641,15 @@ impl FromStr for OpenClose {
             "OPEN" => Ok(Self::Open),
             "CLOSE" => Ok(Self::Close),
             _ => Err(HabRsError::Parse(s.to_string())),
+        }
+    }
+}
+
+impl Display for OpenClose {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Open => write!(f, "OPEN"),
+            Self::Close => write!(f, "CLOSE"),
         }
     }
 }
@@ -544,8 +681,20 @@ impl FromStr for Topic {
     }
 }
 
+impl Display for Topic {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}/{}/{}/{}",
+            self.namespace, self.entity_type, self.entity, self.action
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use paste::paste;
+    use rstest::rstest;
     use serde_json::json;
 
     use super::*;
@@ -609,4 +758,29 @@ data: {"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\
             ])
         );
     }
+
+    macro_rules! enum_test {
+        ($first:ident, $second:ident) => {
+            paste! {
+                #[rstest]
+                #[case::[<value _ $first:lower>]([<$first $second>]::$first, stringify!([<$first:upper>]))]
+                #[case::[<value _ $second:lower>]([<$first $second>]::$second, stringify!([<$second:upper>]))]
+                fn [<test_ $first:lower _ $second:lower>](#[case] val: [<$first $second>], #[case] exp_str: &str) {
+                    let str = val.to_string();
+                    assert_eq!(str, exp_str);
+                    let val_from_str: [<$first $second>] = str.parse().unwrap();
+                    assert_eq!(val_from_str, val);
+                }
+            }
+        };
+    }
+
+    enum_test!(Increase, Decrease);
+    enum_test!(Up, Down);
+    enum_test!(Next, Previous);
+    enum_test!(On, Off);
+    enum_test!(Play, Pause);
+    enum_test!(Rewind, Fastforward);
+    enum_test!(Stop, Move);
+    enum_test!(Open, Close);
 }
