@@ -1174,9 +1174,12 @@ dependencies = [
  "async-trait",
  "clap",
  "hab-rs",
+ "mockall",
+ "serde_json",
  "tokio",
  "tracing",
  "tracing-subscriber",
+ "tracing-test",
 ]
 
 [[package]]

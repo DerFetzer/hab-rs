@@ -59,3 +59,75 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use std::time::Duration;
+
+    use hab_rs::{
+        event::{EventType, Message, MessageType, OnOff, StateUpdatedEvent, Topic, TypedValue},
+        rest_api::MockApiClient,
+    };
+    use tokio::sync::broadcast;
+    use tracing_test::traced_test;
+
+    use super::*;
+
+    #[tokio::test(start_paused = true)]
+    #[traced_test]
+    async fn test_rule() {
+        let (event_tx, event_rx) = broadcast::channel(1);
+
+        // Create mock and set expectation
+        let mut api = MockApiClient::new();
+        api.items_api_mock
+            .expect_get_item_state1()
+            .with(mockall::predicate::eq("test_item"))
+            .times(1)
+            .returning(|_| Ok("ON".to_string()));
+
+        let api = Arc::new(api);
+        let task_api = api.clone();
+
+        // Spawn task that runs the rule
+        let run_handle = tokio::spawn(async move {
+            let mut rule = TestRule;
+            rule.run(task_api, event_rx).await
+        });
+
+        // Send event
+        let mut state_updated_event = StateUpdatedEvent::default();
+        state_updated_event.value = TypedValue::OnOff(OnOff::On);
+        let message_data = serde_json::to_value(Message {
+            topic: Topic {
+                namespace: String::new(),
+                entity_type: String::new(),
+                entity: "command_item".to_string(),
+                action: String::new(),
+            },
+            message_type: MessageType::ItemCommandEvent(state_updated_event),
+        })
+        .unwrap();
+        let on_event = Event {
+            event_type: EventType::Message,
+            data: message_data,
+        };
+        event_tx.send(on_event).unwrap();
+
+        tokio::time::advance(Duration::from_millis(500)).await;
+
+        // Check that task is still running
+        assert!(!run_handle.is_finished());
+
+        run_handle.abort();
+
+        // Yield so that the single threaded runtime is able to abort the task
+        tokio::task::yield_now().await;
+        while !run_handle.is_finished() {}
+
+        // Make sure the mocks are dropped inside the test function so that errors are detected.
+        while Arc::strong_count(&api) > 1 {
+            tokio::time::sleep(Duration::from_millis(100)).await;
+        }
+    }
+}
