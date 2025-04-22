@@ -27,6 +27,10 @@ impl RuleManager {
         }
     }
 
+    pub fn get_api(&self) -> &Arc<ApiClient> {
+        &self.api
+    }
+
     pub fn register(&mut self, rule: Box<dyn Rule>) {
         let rule_name = rule.get_name();
         info!("Register rule {rule_name}");
