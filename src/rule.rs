@@ -8,7 +8,7 @@ use tokio::{
     sync::broadcast::{self, Receiver},
     task::{Id, JoinSet},
 };
-use tracing::{debug, error, info, warn};
+use tracing::{Instrument, debug, error, info, info_span, instrument, warn};
 
 use crate::event::Event;
 
@@ -37,6 +37,7 @@ impl RuleManager {
         self.rules.push(rule);
     }
 
+    #[instrument(skip(self))]
     pub async fn run(self) {
         let (event_tx, _event_rx) = broadcast::channel(100);
         let mut rules_set = JoinSet::new();
@@ -55,50 +56,57 @@ impl RuleManager {
         }
 
         let config = self.config.clone();
-        tokio::spawn(async move {
-            let client = Client::builder()
-                .connect_timeout(Duration::from_secs(5))
-                .build()
-                .expect("Invalid client configuration");
-            loop {
-                tokio::time::sleep(Duration::from_secs(1)).await;
-                let res: Result<(), Box<dyn Error>> = async {
-                    info!("Started event receiver");
-                    let mut request_builder = client.get(format!("{}/events", config.base_path));
-                    if let Some((username, password)) = &config.basic_auth {
-                        request_builder = request_builder.basic_auth(username, password.clone());
-                    }
-                    let mut stream = request_builder.send().await?.bytes_stream();
+        tokio::spawn(
+            async move {
+                let client = Client::builder()
+                    .connect_timeout(Duration::from_secs(5))
+                    .build()
+                    .expect("Invalid client configuration");
+                let loop_span = info_span!("Event receiver");
+                loop {
+                    tokio::time::sleep(Duration::from_secs(1)).await;
+                    let res: Result<(), Box<dyn Error>> = async {
+                        info!("Started event receiver");
+                        let mut request_builder =
+                            client.get(format!("{}/events", config.base_path));
+                        if let Some((username, password)) = &config.basic_auth {
+                            request_builder =
+                                request_builder.basic_auth(username, password.clone());
+                        }
+                        let mut stream = request_builder.send().await?.bytes_stream();
 
-                    let mut buf = vec![];
+                        let mut buf = vec![];
 
-                    while let Some(chunk) = stream.next().await {
-                        buf.extend(chunk?.into_iter());
-                        // Check for double line break
-                        if buf.ends_with(&[0x0A, 0x0A]) {
-                            let event_string = String::from_utf8(buf.clone())?;
-                            buf.clear();
+                        while let Some(chunk) = stream.next().await {
+                            buf.extend(chunk?.into_iter());
+                            // Check for double line break
+                            if buf.ends_with(&[0x0A, 0x0A]) {
+                                let event_string = String::from_utf8(buf.clone())?;
+                                buf.clear();
 
-                            match event_string.trim().parse() {
-                                Ok(event) => {
-                                    debug!("Got event from stream: {event:?}");
-                                    event_tx.send(event).ok();
-                                }
-                                Err(e) => {
-                                    warn!("Could not parse event: {e:?}");
+                                match event_string.trim().parse() {
+                                    Ok(event) => {
+                                        debug!("Got event from stream: {event:?}");
+                                        event_tx.send(event).ok();
+                                    }
+                                    Err(e) => {
+                                        warn!("Could not parse event: {e:?}");
+                                    }
                                 }
                             }
                         }
+                        Ok(())
                     }
-                    Ok(())
+                    .instrument(loop_span.clone())
+                    .await;
+                    match res {
+                        Ok(_) => warn!("Event task exited without error"),
+                        Err(e) => error!("Event task exited with error: {e:?}"),
+                    };
                 }
-                .await;
-                match res {
-                    Ok(_) => warn!("Event task exited without error"),
-                    Err(e) => error!("Event task exited with error: {e:?}"),
-                };
             }
-        });
+            .instrument(info_span!("Event task")),
+        );
 
         while let Some(res) = rules_set.join_next_with_id().await {
             match res {
