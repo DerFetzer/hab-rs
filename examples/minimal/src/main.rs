@@ -103,6 +103,7 @@ mod tests {
                 namespace: String::new(),
                 entity_type: String::new(),
                 entity: "command_item".to_string(),
+                sub_entity: None,
                 action: String::new(),
             },
             message_type: MessageType::ItemCommandEvent(state_updated_event),

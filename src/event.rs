@@ -11,6 +11,7 @@ use crate::error::HabRsError;
 
 #[derive(Debug, Clone, PartialEq)]
 #[non_exhaustive]
+#[allow(clippy::large_enum_variant)]
 pub enum Event {
     Message(Message),
     Alive,
@@ -695,6 +696,7 @@ pub struct Topic {
     pub namespace: String,
     pub entity_type: String,
     pub entity: String,
+    pub sub_entity: Option<String>,
     pub action: String,
 }
 
@@ -710,6 +712,14 @@ impl FromStr for Topic {
                 namespace: namespace.to_string(),
                 entity_type: entity_type.to_string(),
                 entity: entity.to_string(),
+                sub_entity: None,
+                action: action.to_string(),
+            }),
+            [namespace, entity_type, entity, sub_entity, action] => Ok(Self {
+                namespace: namespace.to_string(),
+                entity_type: entity_type.to_string(),
+                entity: entity.to_string(),
+                sub_entity: Some(sub_entity.to_string()),
                 action: action.to_string(),
             }),
             _ => Err(HabRsError::Parse(s.to_string())),
@@ -747,6 +757,7 @@ data: {"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\
                     namespace: "openhab".to_string(),
                     entity_type: "things".to_string(),
                     entity: "jeelink:lacrosse:40".to_string(),
+                    sub_entity: None,
                     action: "status".to_string(),
                 },
                 message_type: MessageType::ThingStatusInfoEvent(StatusInfoEvent {
