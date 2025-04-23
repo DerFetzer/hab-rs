@@ -304,7 +304,7 @@ impl AudioApi for AudioApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_audio_default_sink`]
+/// struct for typed errors of method [AudioApi::get_audio_default_sink]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAudioDefaultSinkError {
@@ -312,7 +312,7 @@ pub enum GetAudioDefaultSinkError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_audio_default_source`]
+/// struct for typed errors of method [AudioApi::get_audio_default_source]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAudioDefaultSourceError {
@@ -320,14 +320,14 @@ pub enum GetAudioDefaultSourceError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_audio_sinks`]
+/// struct for typed errors of method [AudioApi::get_audio_sinks]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAudioSinksError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_audio_sources`]
+/// struct for typed errors of method [AudioApi::get_audio_sources]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAudioSourcesError {

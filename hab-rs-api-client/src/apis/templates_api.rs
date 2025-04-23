@@ -175,7 +175,7 @@ impl TemplatesApi for TemplatesApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_template_by_id`]
+/// struct for typed errors of method [TemplatesApi::get_template_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetTemplateByIdError {
@@ -183,7 +183,7 @@ pub enum GetTemplateByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_templates`]
+/// struct for typed errors of method [TemplatesApi::get_templates]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetTemplatesError {

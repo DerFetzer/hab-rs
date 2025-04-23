@@ -88,7 +88,7 @@ impl UuidApi for UuidApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_uuid`]
+/// struct for typed errors of method [UuidApi::get_uuid]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetUuidError {

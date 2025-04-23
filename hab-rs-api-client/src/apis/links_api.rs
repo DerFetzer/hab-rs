@@ -475,7 +475,7 @@ impl LinksApi for LinksApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_item_link`]
+/// struct for typed errors of method [LinksApi::get_item_link]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetItemLinkError {
@@ -483,21 +483,21 @@ pub enum GetItemLinkError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_item_links`]
+/// struct for typed errors of method [LinksApi::get_item_links]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetItemLinksError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_orphan_links`]
+/// struct for typed errors of method [LinksApi::get_orphan_links]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetOrphanLinksError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`link_item_to_channel`]
+/// struct for typed errors of method [LinksApi::link_item_to_channel]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum LinkItemToChannelError {
@@ -506,21 +506,21 @@ pub enum LinkItemToChannelError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`purge_database1`]
+/// struct for typed errors of method [LinksApi::purge_database1]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PurgeDatabase1Error {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_all_links_for_object`]
+/// struct for typed errors of method [LinksApi::remove_all_links_for_object]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveAllLinksForObjectError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`unlink_item_from_channel`]
+/// struct for typed errors of method [LinksApi::unlink_item_from_channel]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UnlinkItemFromChannelError {

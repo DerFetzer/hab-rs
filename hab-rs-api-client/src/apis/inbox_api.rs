@@ -364,7 +364,7 @@ impl InboxApi for InboxApiClient {
     }
 }
 
-/// struct for typed errors of method [`approve_inbox_item_by_id`]
+/// struct for typed errors of method [InboxApi::approve_inbox_item_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ApproveInboxItemByIdError {
@@ -374,28 +374,28 @@ pub enum ApproveInboxItemByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`flag_inbox_item_as_ignored`]
+/// struct for typed errors of method [InboxApi::flag_inbox_item_as_ignored]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum FlagInboxItemAsIgnoredError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_discovered_inbox_items`]
+/// struct for typed errors of method [InboxApi::get_discovered_inbox_items]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDiscoveredInboxItemsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_ignore_flag_on_inbox_item`]
+/// struct for typed errors of method [InboxApi::remove_ignore_flag_on_inbox_item]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveIgnoreFlagOnInboxItemError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_item_from_inbox`]
+/// struct for typed errors of method [InboxApi::remove_item_from_inbox]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveItemFromInboxError {

@@ -181,7 +181,7 @@ impl ThingTypesApi for ThingTypesApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_thing_type_by_id`]
+/// struct for typed errors of method [ThingTypesApi::get_thing_type_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetThingTypeByIdError {
@@ -189,7 +189,7 @@ pub enum GetThingTypeByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_thing_types`]
+/// struct for typed errors of method [ThingTypesApi::get_thing_types]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetThingTypesError {

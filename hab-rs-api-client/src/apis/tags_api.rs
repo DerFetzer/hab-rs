@@ -403,7 +403,7 @@ impl TagsApi for TagsApiClient {
     }
 }
 
-/// struct for typed errors of method [`create_semantic_tag`]
+/// struct for typed errors of method [TagsApi::create_semantic_tag]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreateSemanticTagError {
@@ -412,7 +412,7 @@ pub enum CreateSemanticTagError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_semantic_tag_and_sub_tags`]
+/// struct for typed errors of method [TagsApi::get_semantic_tag_and_sub_tags]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSemanticTagAndSubTagsError {
@@ -420,14 +420,14 @@ pub enum GetSemanticTagAndSubTagsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_semantic_tags`]
+/// struct for typed errors of method [TagsApi::get_semantic_tags]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSemanticTagsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_semantic_tag`]
+/// struct for typed errors of method [TagsApi::remove_semantic_tag]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveSemanticTagError {
@@ -436,7 +436,7 @@ pub enum RemoveSemanticTagError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_semantic_tag`]
+/// struct for typed errors of method [TagsApi::update_semantic_tag]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateSemanticTagError {

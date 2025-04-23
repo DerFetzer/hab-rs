@@ -296,21 +296,21 @@ impl LoggingApi for LoggingApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_logger`]
+/// struct for typed errors of method [LoggingApi::get_logger]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetLoggerError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_logger1`]
+/// struct for typed errors of method [LoggingApi::get_logger1]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetLogger1Error {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`put_logger`]
+/// struct for typed errors of method [LoggingApi::put_logger]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PutLoggerError {
@@ -318,7 +318,7 @@ pub enum PutLoggerError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_logger`]
+/// struct for typed errors of method [LoggingApi::remove_logger]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveLoggerError {

@@ -92,7 +92,7 @@ impl RootApi for RootApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_root`]
+/// struct for typed errors of method [RootApi::get_root]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRootError {

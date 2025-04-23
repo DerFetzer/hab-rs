@@ -187,7 +187,7 @@ impl ModuleTypesApi for ModuleTypesApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_module_type_by_id`]
+/// struct for typed errors of method [ModuleTypesApi::get_module_type_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetModuleTypeByIdError {
@@ -195,7 +195,7 @@ pub enum GetModuleTypeByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_module_types`]
+/// struct for typed errors of method [ModuleTypesApi::get_module_types]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetModuleTypesError {

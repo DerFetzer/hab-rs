@@ -268,14 +268,14 @@ impl DiscoveryApi for DiscoveryApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_bindings_with_discovery_support`]
+/// struct for typed errors of method [DiscoveryApi::get_bindings_with_discovery_support]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetBindingsWithDiscoverySupportError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_discovery_services_info`]
+/// struct for typed errors of method [DiscoveryApi::get_discovery_services_info]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDiscoveryServicesInfoError {
@@ -283,7 +283,7 @@ pub enum GetDiscoveryServicesInfoError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`scan`]
+/// struct for typed errors of method [DiscoveryApi::scan]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ScanError {

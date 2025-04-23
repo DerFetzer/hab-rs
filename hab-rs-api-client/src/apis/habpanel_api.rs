@@ -172,7 +172,7 @@ impl HabpanelApi for HabpanelApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_gallery_widget_list`]
+/// struct for typed errors of method [HabpanelApi::get_gallery_widget_list]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetGalleryWidgetListError {
@@ -180,7 +180,7 @@ pub enum GetGalleryWidgetListError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_gallery_widgets_item`]
+/// struct for typed errors of method [HabpanelApi::get_gallery_widgets_item]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetGalleryWidgetsItemError {

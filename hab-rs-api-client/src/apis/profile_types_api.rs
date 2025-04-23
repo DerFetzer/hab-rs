@@ -123,7 +123,7 @@ impl ProfileTypesApi for ProfileTypesApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_profile_types`]
+/// struct for typed errors of method [ProfileTypesApi::get_profile_types]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetProfileTypesError {

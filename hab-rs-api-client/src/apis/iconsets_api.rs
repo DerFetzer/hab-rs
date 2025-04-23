@@ -102,7 +102,7 @@ impl IconsetsApi for IconsetsApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_icon_sets`]
+/// struct for typed errors of method [IconsetsApi::get_icon_sets]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetIconSetsError {

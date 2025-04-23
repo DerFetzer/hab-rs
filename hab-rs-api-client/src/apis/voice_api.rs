@@ -805,7 +805,7 @@ impl VoiceApi for VoiceApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_default_voice`]
+/// struct for typed errors of method [VoiceApi::get_default_voice]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDefaultVoiceError {
@@ -813,7 +813,7 @@ pub enum GetDefaultVoiceError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_voice_interpreter_by_uid`]
+/// struct for typed errors of method [VoiceApi::get_voice_interpreter_by_uid]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetVoiceInterpreterByUidError {
@@ -821,21 +821,21 @@ pub enum GetVoiceInterpreterByUidError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_voice_interpreters`]
+/// struct for typed errors of method [VoiceApi::get_voice_interpreters]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetVoiceInterpretersError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_voices`]
+/// struct for typed errors of method [VoiceApi::get_voices]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetVoicesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`interpret_text`]
+/// struct for typed errors of method [VoiceApi::interpret_text]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum InterpretTextError {
@@ -844,7 +844,7 @@ pub enum InterpretTextError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`interpret_text_by_default_interpreter`]
+/// struct for typed errors of method [VoiceApi::interpret_text_by_default_interpreter]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum InterpretTextByDefaultInterpreterError {
@@ -853,7 +853,7 @@ pub enum InterpretTextByDefaultInterpreterError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`listen_and_answer`]
+/// struct for typed errors of method [VoiceApi::listen_and_answer]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ListenAndAnswerError {
@@ -862,7 +862,7 @@ pub enum ListenAndAnswerError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`start_dialog`]
+/// struct for typed errors of method [VoiceApi::start_dialog]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum StartDialogError {
@@ -871,7 +871,7 @@ pub enum StartDialogError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`stop_dialog`]
+/// struct for typed errors of method [VoiceApi::stop_dialog]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum StopDialogError {
@@ -880,7 +880,7 @@ pub enum StopDialogError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`text_to_speech`]
+/// struct for typed errors of method [VoiceApi::text_to_speech]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum TextToSpeechError {

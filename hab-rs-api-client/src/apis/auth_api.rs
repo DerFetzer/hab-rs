@@ -376,7 +376,7 @@ impl AuthApi for AuthApiClient {
     }
 }
 
-/// struct for typed errors of method [`delete_session`]
+/// struct for typed errors of method [AuthApi::delete_session]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteSessionError {
@@ -385,7 +385,7 @@ pub enum DeleteSessionError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_api_tokens`]
+/// struct for typed errors of method [AuthApi::get_api_tokens]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetApiTokensError {
@@ -394,7 +394,7 @@ pub enum GetApiTokensError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_o_auth_token`]
+/// struct for typed errors of method [AuthApi::get_o_auth_token]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetOAuthTokenError {
@@ -402,7 +402,7 @@ pub enum GetOAuthTokenError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_sessions_for_current_user`]
+/// struct for typed errors of method [AuthApi::get_sessions_for_current_user]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSessionsForCurrentUserError {
@@ -411,7 +411,7 @@ pub enum GetSessionsForCurrentUserError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_api_token`]
+/// struct for typed errors of method [AuthApi::remove_api_token]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveApiTokenError {

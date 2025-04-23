@@ -512,7 +512,7 @@ impl ServicesApi for ServicesApiClient {
     }
 }
 
-/// struct for typed errors of method [`delete_service_config`]
+/// struct for typed errors of method [ServicesApi::delete_service_config]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteServiceConfigError {
@@ -520,7 +520,7 @@ pub enum DeleteServiceConfigError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_service_config`]
+/// struct for typed errors of method [ServicesApi::get_service_config]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetServiceConfigError {
@@ -528,21 +528,21 @@ pub enum GetServiceConfigError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_service_context`]
+/// struct for typed errors of method [ServicesApi::get_service_context]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetServiceContextError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_services`]
+/// struct for typed errors of method [ServicesApi::get_services]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetServicesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_services_by_id`]
+/// struct for typed errors of method [ServicesApi::get_services_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetServicesByIdError {
@@ -550,7 +550,7 @@ pub enum GetServicesByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_service_config`]
+/// struct for typed errors of method [ServicesApi::update_service_config]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateServiceConfigError {

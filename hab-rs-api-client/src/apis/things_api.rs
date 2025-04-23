@@ -1010,7 +1010,7 @@ impl ThingsApi for ThingsApiClient {
     }
 }
 
-/// struct for typed errors of method [`create_thing_in_registry`]
+/// struct for typed errors of method [ThingsApi::create_thing_in_registry]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreateThingInRegistryError {
@@ -1019,7 +1019,7 @@ pub enum CreateThingInRegistryError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`enable_thing`]
+/// struct for typed errors of method [ThingsApi::enable_thing]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum EnableThingError {
@@ -1027,14 +1027,14 @@ pub enum EnableThingError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_available_firmwares_for_thing`]
+/// struct for typed errors of method [ThingsApi::get_available_firmwares_for_thing]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAvailableFirmwaresForThingError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_thing_by_id`]
+/// struct for typed errors of method [ThingsApi::get_thing_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetThingByIdError {
@@ -1042,7 +1042,7 @@ pub enum GetThingByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_thing_config_status`]
+/// struct for typed errors of method [ThingsApi::get_thing_config_status]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetThingConfigStatusError {
@@ -1050,14 +1050,14 @@ pub enum GetThingConfigStatusError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_thing_firmware_status`]
+/// struct for typed errors of method [ThingsApi::get_thing_firmware_status]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetThingFirmwareStatusError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_thing_status`]
+/// struct for typed errors of method [ThingsApi::get_thing_status]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetThingStatusError {
@@ -1065,14 +1065,14 @@ pub enum GetThingStatusError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_things`]
+/// struct for typed errors of method [ThingsApi::get_things]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetThingsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_thing_by_id`]
+/// struct for typed errors of method [ThingsApi::remove_thing_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveThingByIdError {
@@ -1081,7 +1081,7 @@ pub enum RemoveThingByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_thing`]
+/// struct for typed errors of method [ThingsApi::update_thing]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateThingError {
@@ -1090,7 +1090,7 @@ pub enum UpdateThingError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_thing_config`]
+/// struct for typed errors of method [ThingsApi::update_thing_config]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateThingConfigError {
@@ -1100,7 +1100,7 @@ pub enum UpdateThingConfigError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_thing_firmware`]
+/// struct for typed errors of method [ThingsApi::update_thing_firmware]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateThingFirmwareError {

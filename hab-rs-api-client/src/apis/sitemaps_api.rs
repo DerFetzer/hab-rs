@@ -552,7 +552,7 @@ impl SitemapsApi for SitemapsApiClient {
     }
 }
 
-/// struct for typed errors of method [`create_sitemap_event_subscription`]
+/// struct for typed errors of method [SitemapsApi::create_sitemap_event_subscription]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreateSitemapEventSubscriptionError {
@@ -560,14 +560,14 @@ pub enum CreateSitemapEventSubscriptionError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_sitemap_by_name`]
+/// struct for typed errors of method [SitemapsApi::get_sitemap_by_name]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSitemapByNameError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_sitemap_events`]
+/// struct for typed errors of method [SitemapsApi::get_sitemap_events]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSitemapEventsError {
@@ -576,7 +576,7 @@ pub enum GetSitemapEventsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_sitemap_events1`]
+/// struct for typed errors of method [SitemapsApi::get_sitemap_events1]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSitemapEvents1Error {
@@ -585,14 +585,14 @@ pub enum GetSitemapEvents1Error {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_sitemaps`]
+/// struct for typed errors of method [SitemapsApi::get_sitemaps]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSitemapsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`poll_data_for_page`]
+/// struct for typed errors of method [SitemapsApi::poll_data_for_page]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PollDataForPageError {
@@ -601,7 +601,7 @@ pub enum PollDataForPageError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`poll_data_for_sitemap`]
+/// struct for typed errors of method [SitemapsApi::poll_data_for_sitemap]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PollDataForSitemapError {

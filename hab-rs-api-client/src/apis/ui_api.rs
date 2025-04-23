@@ -458,21 +458,21 @@ impl UiApi for UiApiClient {
     }
 }
 
-/// struct for typed errors of method [`add_ui_component_to_namespace`]
+/// struct for typed errors of method [UiApi::add_ui_component_to_namespace]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum AddUiComponentToNamespaceError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_registered_ui_components_in_namespace`]
+/// struct for typed errors of method [UiApi::get_registered_ui_components_in_namespace]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRegisteredUiComponentsInNamespaceError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_ui_component_in_namespace`]
+/// struct for typed errors of method [UiApi::get_ui_component_in_namespace]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetUiComponentInNamespaceError {
@@ -480,14 +480,14 @@ pub enum GetUiComponentInNamespaceError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_ui_tiles`]
+/// struct for typed errors of method [UiApi::get_ui_tiles]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetUiTilesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_ui_component_from_namespace`]
+/// struct for typed errors of method [UiApi::remove_ui_component_from_namespace]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveUiComponentFromNamespaceError {
@@ -495,7 +495,7 @@ pub enum RemoveUiComponentFromNamespaceError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_ui_component_in_namespace`]
+/// struct for typed errors of method [UiApi::update_ui_component_in_namespace]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateUiComponentInNamespaceError {

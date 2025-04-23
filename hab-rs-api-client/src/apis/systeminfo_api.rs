@@ -175,14 +175,14 @@ impl SysteminfoApi for SysteminfoApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_system_information`]
+/// struct for typed errors of method [SysteminfoApi::get_system_information]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSystemInformationError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_uo_m_information`]
+/// struct for typed errors of method [SysteminfoApi::get_uo_m_information]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetUoMInformationError {

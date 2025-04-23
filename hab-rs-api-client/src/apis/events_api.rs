@@ -175,7 +175,7 @@ impl EventsApi for EventsApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_events`]
+/// struct for typed errors of method [EventsApi::get_events]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetEventsError {
@@ -183,14 +183,14 @@ pub enum GetEventsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`init_new_state_tacker`]
+/// struct for typed errors of method [EventsApi::init_new_state_tacker]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum InitNewStateTackerError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_item_list_for_state_updates`]
+/// struct for typed errors of method [EventsApi::update_item_list_for_state_updates]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateItemListForStateUpdatesError {

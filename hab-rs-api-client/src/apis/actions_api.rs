@@ -187,7 +187,7 @@ impl ActionsApi for ActionsApiClient {
     }
 }
 
-/// struct for typed errors of method [`execute_thing_action`]
+/// struct for typed errors of method [ActionsApi::execute_thing_action]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ExecuteThingActionError {
@@ -196,7 +196,7 @@ pub enum ExecuteThingActionError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_available_actions_for_thing`]
+/// struct for typed errors of method [ActionsApi::get_available_actions_for_thing]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAvailableActionsForThingError {

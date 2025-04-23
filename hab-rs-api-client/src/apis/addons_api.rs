@@ -792,7 +792,7 @@ impl AddonsApi for AddonsApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_addon_by_id`]
+/// struct for typed errors of method [AddonsApi::get_addon_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAddonByIdError {
@@ -800,7 +800,7 @@ pub enum GetAddonByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_addon_configuration`]
+/// struct for typed errors of method [AddonsApi::get_addon_configuration]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAddonConfigurationError {
@@ -809,7 +809,7 @@ pub enum GetAddonConfigurationError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_addon_services`]
+/// struct for typed errors of method [AddonsApi::get_addon_services]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAddonServicesError {
@@ -817,14 +817,14 @@ pub enum GetAddonServicesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_addon_types`]
+/// struct for typed errors of method [AddonsApi::get_addon_types]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAddonTypesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_addons`]
+/// struct for typed errors of method [AddonsApi::get_addons]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAddonsError {
@@ -832,14 +832,14 @@ pub enum GetAddonsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_suggested_addons`]
+/// struct for typed errors of method [AddonsApi::get_suggested_addons]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSuggestedAddonsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`install_addon_by_id`]
+/// struct for typed errors of method [AddonsApi::install_addon_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum InstallAddonByIdError {
@@ -847,7 +847,7 @@ pub enum InstallAddonByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`install_addon_from_url`]
+/// struct for typed errors of method [AddonsApi::install_addon_from_url]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum InstallAddonFromUrlError {
@@ -855,7 +855,7 @@ pub enum InstallAddonFromUrlError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`uninstall_addon`]
+/// struct for typed errors of method [AddonsApi::uninstall_addon]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UninstallAddonError {
@@ -863,7 +863,7 @@ pub enum UninstallAddonError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_addon_configuration`]
+/// struct for typed errors of method [AddonsApi::update_addon_configuration]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateAddonConfigurationError {

@@ -1289,7 +1289,7 @@ impl RulesApi for RulesApiClient {
     }
 }
 
-/// struct for typed errors of method [`create_rule`]
+/// struct for typed errors of method [RulesApi::create_rule]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreateRuleError {
@@ -1298,7 +1298,7 @@ pub enum CreateRuleError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`delete_rule`]
+/// struct for typed errors of method [RulesApi::delete_rule]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteRuleError {
@@ -1306,7 +1306,7 @@ pub enum DeleteRuleError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`enable_rule`]
+/// struct for typed errors of method [RulesApi::enable_rule]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum EnableRuleError {
@@ -1314,7 +1314,7 @@ pub enum EnableRuleError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_rule_actions`]
+/// struct for typed errors of method [RulesApi::get_rule_actions]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRuleActionsError {
@@ -1322,7 +1322,7 @@ pub enum GetRuleActionsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_rule_by_id`]
+/// struct for typed errors of method [RulesApi::get_rule_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRuleByIdError {
@@ -1330,7 +1330,7 @@ pub enum GetRuleByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_rule_conditions`]
+/// struct for typed errors of method [RulesApi::get_rule_conditions]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRuleConditionsError {
@@ -1338,7 +1338,7 @@ pub enum GetRuleConditionsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_rule_configuration`]
+/// struct for typed errors of method [RulesApi::get_rule_configuration]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRuleConfigurationError {
@@ -1346,7 +1346,7 @@ pub enum GetRuleConfigurationError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_rule_module_by_id`]
+/// struct for typed errors of method [RulesApi::get_rule_module_by_id]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRuleModuleByIdError {
@@ -1354,7 +1354,7 @@ pub enum GetRuleModuleByIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_rule_module_config`]
+/// struct for typed errors of method [RulesApi::get_rule_module_config]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRuleModuleConfigError {
@@ -1362,7 +1362,7 @@ pub enum GetRuleModuleConfigError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_rule_module_config_parameter`]
+/// struct for typed errors of method [RulesApi::get_rule_module_config_parameter]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRuleModuleConfigParameterError {
@@ -1370,7 +1370,7 @@ pub enum GetRuleModuleConfigParameterError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_rule_triggers`]
+/// struct for typed errors of method [RulesApi::get_rule_triggers]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRuleTriggersError {
@@ -1378,14 +1378,14 @@ pub enum GetRuleTriggersError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_rules`]
+/// struct for typed errors of method [RulesApi::get_rules]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetRulesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_schedule_rule_simulations`]
+/// struct for typed errors of method [RulesApi::get_schedule_rule_simulations]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetScheduleRuleSimulationsError {
@@ -1393,7 +1393,7 @@ pub enum GetScheduleRuleSimulationsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`run_rule_now1`]
+/// struct for typed errors of method [RulesApi::run_rule_now1]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RunRuleNow1Error {
@@ -1401,7 +1401,7 @@ pub enum RunRuleNow1Error {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`set_rule_module_config_parameter`]
+/// struct for typed errors of method [RulesApi::set_rule_module_config_parameter]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum SetRuleModuleConfigParameterError {
@@ -1409,7 +1409,7 @@ pub enum SetRuleModuleConfigParameterError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_rule`]
+/// struct for typed errors of method [RulesApi::update_rule]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateRuleError {
@@ -1417,7 +1417,7 @@ pub enum UpdateRuleError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_rule_configuration`]
+/// struct for typed errors of method [RulesApi::update_rule_configuration]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateRuleConfigurationError {

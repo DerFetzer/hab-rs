@@ -702,7 +702,7 @@ impl PersistenceApi for PersistenceApiClient {
     }
 }
 
-/// struct for typed errors of method [`delete_item_from_persistence_service`]
+/// struct for typed errors of method [PersistenceApi::delete_item_from_persistence_service]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteItemFromPersistenceServiceError {
@@ -711,7 +711,7 @@ pub enum DeleteItemFromPersistenceServiceError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`delete_persistence_service_configuration`]
+/// struct for typed errors of method [PersistenceApi::delete_persistence_service_configuration]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeletePersistenceServiceConfigurationError {
@@ -720,7 +720,7 @@ pub enum DeletePersistenceServiceConfigurationError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_item_data_from_persistence_service`]
+/// struct for typed errors of method [PersistenceApi::get_item_data_from_persistence_service]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetItemDataFromPersistenceServiceError {
@@ -728,14 +728,14 @@ pub enum GetItemDataFromPersistenceServiceError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_items_for_persistence_service`]
+/// struct for typed errors of method [PersistenceApi::get_items_for_persistence_service]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetItemsForPersistenceServiceError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_persistence_service_configuration`]
+/// struct for typed errors of method [PersistenceApi::get_persistence_service_configuration]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetPersistenceServiceConfigurationError {
@@ -743,14 +743,14 @@ pub enum GetPersistenceServiceConfigurationError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_persistence_services`]
+/// struct for typed errors of method [PersistenceApi::get_persistence_services]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetPersistenceServicesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`put_persistence_service_configuration`]
+/// struct for typed errors of method [PersistenceApi::put_persistence_service_configuration]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PutPersistenceServiceConfigurationError {
@@ -759,7 +759,7 @@ pub enum PutPersistenceServiceConfigurationError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`store_item_data_in_persistence_service`]
+/// struct for typed errors of method [PersistenceApi::store_item_data_in_persistence_service]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum StoreItemDataInPersistenceServiceError {

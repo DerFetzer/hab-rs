@@ -373,7 +373,7 @@ impl TransformationsApi for TransformationsApiClient {
     }
 }
 
-/// struct for typed errors of method [`delete_transformation`]
+/// struct for typed errors of method [TransformationsApi::delete_transformation]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteTransformationError {
@@ -382,7 +382,7 @@ pub enum DeleteTransformationError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_transformation`]
+/// struct for typed errors of method [TransformationsApi::get_transformation]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetTransformationError {
@@ -390,21 +390,21 @@ pub enum GetTransformationError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_transformation_services`]
+/// struct for typed errors of method [TransformationsApi::get_transformation_services]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetTransformationServicesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_transformations`]
+/// struct for typed errors of method [TransformationsApi::get_transformations]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetTransformationsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`put_transformation`]
+/// struct for typed errors of method [TransformationsApi::put_transformation]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PutTransformationError {

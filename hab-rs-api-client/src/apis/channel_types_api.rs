@@ -275,7 +275,7 @@ impl ChannelTypesApi for ChannelTypesApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_channel_type_by_uid`]
+/// struct for typed errors of method [ChannelTypesApi::get_channel_type_by_uid]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetChannelTypeByUidError {
@@ -283,14 +283,14 @@ pub enum GetChannelTypeByUidError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_channel_types`]
+/// struct for typed errors of method [ChannelTypesApi::get_channel_types]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetChannelTypesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_linkable_item_types_by_channel_type_uid`]
+/// struct for typed errors of method [ChannelTypesApi::get_linkable_item_types_by_channel_type_uid]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetLinkableItemTypesByChannelTypeUidError {

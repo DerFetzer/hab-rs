@@ -200,7 +200,7 @@ impl ConfigDescriptionsApi for ConfigDescriptionsApiClient {
     }
 }
 
-/// struct for typed errors of method [`get_config_description_by_uri`]
+/// struct for typed errors of method [ConfigDescriptionsApi::get_config_description_by_uri]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetConfigDescriptionByUriError {
@@ -209,7 +209,7 @@ pub enum GetConfigDescriptionByUriError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_config_descriptions`]
+/// struct for typed errors of method [ConfigDescriptionsApi::get_config_descriptions]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetConfigDescriptionsError {

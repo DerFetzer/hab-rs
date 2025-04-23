@@ -1185,7 +1185,7 @@ impl ItemsApi for ItemsApiClient {
     }
 }
 
-/// struct for typed errors of method [`add_member_to_group_item`]
+/// struct for typed errors of method [ItemsApi::add_member_to_group_item]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum AddMemberToGroupItemError {
@@ -1194,7 +1194,7 @@ pub enum AddMemberToGroupItemError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`add_metadata_to_item`]
+/// struct for typed errors of method [ItemsApi::add_metadata_to_item]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum AddMetadataToItemError {
@@ -1204,7 +1204,7 @@ pub enum AddMetadataToItemError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`add_or_update_item_in_registry`]
+/// struct for typed errors of method [ItemsApi::add_or_update_item_in_registry]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum AddOrUpdateItemInRegistryError {
@@ -1214,7 +1214,7 @@ pub enum AddOrUpdateItemInRegistryError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`add_or_update_items_in_registry`]
+/// struct for typed errors of method [ItemsApi::add_or_update_items_in_registry]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum AddOrUpdateItemsInRegistryError {
@@ -1222,7 +1222,7 @@ pub enum AddOrUpdateItemsInRegistryError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`add_tag_to_item`]
+/// struct for typed errors of method [ItemsApi::add_tag_to_item]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum AddTagToItemError {
@@ -1231,7 +1231,7 @@ pub enum AddTagToItemError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_item_by_name`]
+/// struct for typed errors of method [ItemsApi::get_item_by_name]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetItemByNameError {
@@ -1239,7 +1239,7 @@ pub enum GetItemByNameError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_item_namespaces`]
+/// struct for typed errors of method [ItemsApi::get_item_namespaces]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetItemNamespacesError {
@@ -1247,7 +1247,7 @@ pub enum GetItemNamespacesError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_item_state1`]
+/// struct for typed errors of method [ItemsApi::get_item_state1]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetItemState1Error {
@@ -1255,14 +1255,14 @@ pub enum GetItemState1Error {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_items`]
+/// struct for typed errors of method [ItemsApi::get_items]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetItemsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_semantic_item`]
+/// struct for typed errors of method [ItemsApi::get_semantic_item]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSemanticItemError {
@@ -1270,14 +1270,14 @@ pub enum GetSemanticItemError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`purge_database`]
+/// struct for typed errors of method [ItemsApi::purge_database]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PurgeDatabaseError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_item_from_registry`]
+/// struct for typed errors of method [ItemsApi::remove_item_from_registry]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveItemFromRegistryError {
@@ -1285,7 +1285,7 @@ pub enum RemoveItemFromRegistryError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_member_from_group_item`]
+/// struct for typed errors of method [ItemsApi::remove_member_from_group_item]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveMemberFromGroupItemError {
@@ -1294,7 +1294,7 @@ pub enum RemoveMemberFromGroupItemError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_metadata_from_item`]
+/// struct for typed errors of method [ItemsApi::remove_metadata_from_item]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveMetadataFromItemError {
@@ -1303,7 +1303,7 @@ pub enum RemoveMetadataFromItemError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`remove_tag_from_item`]
+/// struct for typed errors of method [ItemsApi::remove_tag_from_item]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveTagFromItemError {
@@ -1312,7 +1312,7 @@ pub enum RemoveTagFromItemError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`send_item_command`]
+/// struct for typed errors of method [ItemsApi::send_item_command]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum SendItemCommandError {
@@ -1321,7 +1321,7 @@ pub enum SendItemCommandError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`update_item_state`]
+/// struct for typed errors of method [ItemsApi::update_item_state]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateItemStateError {
