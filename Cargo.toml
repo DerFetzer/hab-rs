@@ -6,7 +6,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.2.0"
+version = "0.3.0"
 license = "MIT"
 edition = "2024"
 authors = ["DerFetzer <kontakt@der-fetzer.de>"]
@@ -25,7 +25,7 @@ repository.workspace = true
 description.workspace = true
 
 [workspace.dependencies]
-hab-rs-api-client = { version = "=0.2.0", path = "hab-rs-api-client", default-features = false }
+hab-rs-api-client = { version = "=0.3.0", path = "hab-rs-api-client", default-features = false }
 
 [dependencies]
 async-trait = "0.1.88"
