@@ -90,7 +90,7 @@ to intervene to uphold that code of conduct.
 [rust]: https://www.rust-lang.org/
 [openHAB]: https://www.openhab.org/
 
-[crates-badge]: https://img.shields.io/crates/v/badge-maker.svg
+[crates-badge]: https://img.shields.io/crates/v/hab-rs.svg
 [crates-url]: https://crates.io/crates/hab-rs
 [mit-badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [mit-url]: https://github.com/DerFetzer/hab-rs/blob/master/LICENSE-MIT
