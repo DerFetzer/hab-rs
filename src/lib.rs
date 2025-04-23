@@ -1,3 +1,6 @@
+#![warn(missing_docs)]
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
 pub mod error;
 pub mod event;
 pub mod item;

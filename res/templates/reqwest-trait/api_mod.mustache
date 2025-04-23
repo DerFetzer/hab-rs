@@ -152,6 +152,7 @@ impl From<&str> for ContentType {
 {{#apiInfo}}
 {{#apis}}
 #[cfg(feature = "{{{classFilename}}}")]
+#[cfg_attr(docsrs, doc(cfg(feature = "{{{classFilename}}}")))]
 pub mod {{{classFilename}}};
 {{/apis}}
 {{/apiInfo}}
@@ -165,6 +166,7 @@ pub trait Api: Send + Sync {
     {{#apiInfo}}
     {{#apis}}
     #[cfg(feature = "{{{classFilename}}}")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "{{{classFilename}}}")))]
     fn {{{classFilename}}}(&self) -> &dyn {{{classFilename}}}::{{classname}};
     {{/apis}}
     {{/apiInfo}}
@@ -174,6 +176,7 @@ pub struct ApiClient {
     {{#apiInfo}}
     {{#apis}}
     #[cfg(feature = "{{{classFilename}}}")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "{{{classFilename}}}")))]
     {{{classFilename}}}: Box<dyn {{{classFilename}}}::{{classname}}>,
     {{/apis}}
     {{/apiInfo}}
@@ -196,6 +199,7 @@ impl Api for ApiClient {
     {{#apiInfo}}
     {{#apis}}
     #[cfg(feature = "{{{classFilename}}}")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "{{{classFilename}}}")))]
     fn {{{classFilename}}}(&self) -> &dyn {{{classFilename}}}::{{classname}} {
         self.{{{classFilename}}}.as_ref()
     }
@@ -205,22 +209,26 @@ impl Api for ApiClient {
 
 {{#mockall}}
 #[cfg(feature = "mockall")]
+#[cfg_attr(docsrs, doc(cfg(feature = "mockall")))]
 pub struct MockApiClient {
     {{#apiInfo}}
     {{#apis}}
     #[cfg(feature = "{{{classFilename}}}")]
+    #[cfg_attr(docsrs, doc(cfg(feature = "mockall")))]
     pub {{{classFilename}}}_mock: {{{classFilename}}}::Mock{{classname}},
     {{/apis}}
     {{/apiInfo}}
 }
 
 #[cfg(feature = "mockall")]
+#[cfg_attr(docsrs, doc(cfg(feature = "mockall")))]
 impl MockApiClient {
     pub fn new() -> Self {
         Self {
             {{#apiInfo}}
             {{#apis}}
             #[cfg(feature = "{{{classFilename}}}")]
+            #[cfg_attr(docsrs, doc(cfg(feature = "mockall")))]
             {{{classFilename}}}_mock: {{{classFilename}}}::Mock{{classname}}::new(),
             {{/apis}}
             {{/apiInfo}}
@@ -229,6 +237,7 @@ impl MockApiClient {
 }
 
 #[cfg(feature = "mockall")]
+#[cfg_attr(docsrs, doc(cfg(feature = "mockall")))]
 impl Api for MockApiClient {
     {{#apiInfo}}
     {{#apis}}

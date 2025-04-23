@@ -75,6 +75,10 @@ mockall = { version = "^0.13", optional = true}
 bon = { version = "2.3", optional = true }
 {{/useBonBuilder}}
 
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
 [features]
 default = ["items_api"]
 native-tls = ["reqwest/native-tls"]

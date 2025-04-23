@@ -9,3 +9,6 @@ files:
   "Cargo.mustache":
     templateType: SupportingFiles
     destinationFilename: Cargo.toml
+  "lib.mustache":
+    templateType: SupportingFiles
+    destinationFilename: src/lib.rs

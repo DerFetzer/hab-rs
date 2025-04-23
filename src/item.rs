@@ -10,6 +10,7 @@ use crate::event::{Message, MessageType, StateChangedEvent, StateUpdatedEvent};
 pub struct Item(pub String);
 
 #[cfg(feature = "items_api")]
+#[cfg_attr(docsrs, doc(cfg(feature = "items_api")))]
 impl Item {
     #[instrument(skip(items_api))]
     pub async fn send_command(
