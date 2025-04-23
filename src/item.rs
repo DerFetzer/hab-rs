@@ -1,6 +1,7 @@
-use hab_rs_api_client::apis::items_api::GetItemState1Error;
 #[cfg(feature = "items_api")]
-use hab_rs_api_client::apis::items_api::{ItemsApi, SendItemCommandError, UpdateItemStateError};
+use hab_rs_api_client::apis::items_api::{
+    GetItemState1Error, ItemsApi, SendItemCommandError, UpdateItemStateError,
+};
 use tracing::instrument;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
