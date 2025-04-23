@@ -15,7 +15,7 @@ use hab_rs::{
 };
 use palette::Hsv;
 use tokio::time::timeout;
-use tracing::{error, info};
+use tracing::info;
 use tracing_test::traced_test;
 
 mod container;
@@ -33,17 +33,15 @@ impl Rule for DummyRule {
     async fn run(
         &mut self,
         _api: Arc<dyn Api>,
-        mut event_receiver: tokio::sync::broadcast::Receiver<Event>,
+        mut event_receiver: tokio::sync::broadcast::Receiver<Arc<Event>>,
     ) -> Result<(), Box<dyn std::error::Error + Send>> {
         while let Ok(event) = event_receiver.recv().await {
             info!("Got event: {event:?}");
-            match event.into_message_type() {
-                Ok(Some(MessageType::ItemStateUpdatedEvent(updated_event))) => {
+            if let Event::Message(message) = event.as_ref() {
+                if let MessageType::ItemStateUpdatedEvent(updated_event) = &message.message_type {
                     info!("Send updated event: {updated_event:?}");
-                    self.event_tx.send(updated_event).await.unwrap();
+                    self.event_tx.send(updated_event.clone()).await.unwrap();
                 }
-                Err(e) => error!("Could not convert event into message type: {e:?}"),
-                _ => (),
             };
         }
         Ok(())

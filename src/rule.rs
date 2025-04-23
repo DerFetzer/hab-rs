@@ -87,7 +87,7 @@ impl RuleManager {
                                 match event_string.trim().parse() {
                                     Ok(event) => {
                                         debug!("Got event from stream: {event:?}");
-                                        event_tx.send(event).ok();
+                                        event_tx.send(Arc::new(event)).ok();
                                     }
                                     Err(e) => {
                                         warn!("Could not parse event: {e:?}");
@@ -146,7 +146,7 @@ pub trait Rule: Send {
     async fn run(
         &mut self,
         api: Arc<dyn Api>,
-        event_receiver: Receiver<Event>,
+        event_receiver: Receiver<Arc<Event>>,
     ) -> Result<(), Box<dyn std::error::Error + Send>>;
 }
 
@@ -168,7 +168,7 @@ mod tests {
         async fn run(
             &mut self,
             api: Arc<dyn Api>,
-            _event_receiver: Receiver<Event>,
+            _event_receiver: Receiver<Arc<Event>>,
         ) -> Result<(), Box<dyn std::error::Error + Send>> {
             api.items_api().get_item_state1("test_item").await.ok();
             Ok(())

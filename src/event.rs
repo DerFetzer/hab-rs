@@ -5,37 +5,16 @@ use chrono::FixedOffset;
 use palette::Hsv;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use serde_with::{DeserializeFromStr, SerializeDisplay};
 
 use crate::error::HabRsError;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Event {
-    pub event_type: EventType,
-    pub data: Value,
-}
-
-impl Event {
-    pub fn into_message(self) -> Result<Option<Message>, HabRsError> {
-        if self.event_type != EventType::Message {
-            Ok(None)
-        } else {
-            Ok(Some(serde_json::from_value(self.data)?))
-        }
-    }
-
-    pub fn into_message_type_for_entity(
-        self,
-        entity: &str,
-    ) -> Result<Option<MessageType>, HabRsError> {
-        self.into_message()
-            .map(|m| m.and_then(|m| m.into_message_type_for_entity(entity)))
-    }
-
-    pub fn into_message_type(self) -> Result<Option<MessageType>, HabRsError> {
-        self.into_message().map(|m| m.map(|m| m.message_type))
-    }
+#[non_exhaustive]
+pub enum Event {
+    Message(Message),
+    Alive,
+    Unknown(UnknownEvent),
 }
 
 impl FromStr for Event {
@@ -46,10 +25,25 @@ impl FromStr for Event {
             [first_line, second_line]
                 if first_line.starts_with("event: ") && second_line.starts_with("data: ") =>
             {
-                Ok(Self {
-                    event_type: first_line.trim_start_matches("event: ").parse()?,
-                    data: serde_json::from_str(second_line.trim_start_matches("data: "))?,
-                })
+                let event_type = first_line
+                    .split_once(":")
+                    .expect("First line does not contain ':'")
+                    .1
+                    .trim();
+                let data = second_line
+                    .split_once(":")
+                    .expect("First line does not contain ':'")
+                    .1
+                    .trim();
+
+                match event_type {
+                    "message" => Ok(Self::Message(serde_json::from_str(data)?)),
+                    "alive" => Ok(Self::Alive),
+                    _ => Ok(Self::Unknown(UnknownEvent {
+                        event_type: event_type.to_string(),
+                        data: data.to_string(),
+                    })),
+                }
             }
             _ => Err(HabRsError::Parse(s.to_string())),
         }
@@ -57,26 +51,9 @@ impl FromStr for Event {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-#[non_exhaustive]
-pub enum EventType {
-    Message,
-    Alive,
-    Unknown(String),
-}
-
-impl FromStr for EventType {
-    type Err = HabRsError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "message" => Ok(Self::Message),
-            "alive" => Ok(Self::Alive),
-            s if !s.is_empty() && s.is_ascii() && s.chars().all(|c| !c.is_whitespace()) => {
-                Ok(Self::Unknown(s.to_string()))
-            }
-            s => Err(HabRsError::Parse(s.to_string())),
-        }
-    }
+pub struct UnknownEvent {
+    event_type: String,
+    data: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
@@ -754,7 +731,6 @@ impl Display for Topic {
 mod tests {
     use paste::paste;
     use rstest::rstest;
-    use serde_json::json;
 
     use super::*;
 
@@ -766,16 +742,7 @@ data: {"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\
         let event = event_str.parse::<Event>().unwrap();
         assert_eq!(
             event,
-            Event {
-                event_type: EventType::Message,
-                data: json!({"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\":\"ONLINE\",\"statusDetail\":\"NONE\"}","type":"ThingStatusInfoEvent"})
-            }
-        );
-
-        let message = event.into_message().unwrap().unwrap();
-        assert_eq!(
-            message,
-            Message {
+            Event::Message(Message {
                 topic: Topic {
                     namespace: "openhab".to_string(),
                     entity_type: "things".to_string(),
@@ -787,7 +754,7 @@ data: {"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\
                     status_detail: "NONE".to_string(),
                     description: None,
                 }),
-            }
+            })
         );
     }
 

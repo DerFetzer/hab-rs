@@ -27,11 +27,11 @@ impl Rule for TestRule {
     async fn run(
         &mut self,
         api: Arc<dyn Api>,
-        mut event_receiver: Receiver<Event>,
+        mut event_receiver: Receiver<Arc<Event>>,
     ) -> Result<(), Box<dyn std::error::Error + Send>> {
         while let Ok(event) = event_receiver.recv().await {
             info!("Got event: {event:?}");
-            if let Ok(Some(message)) = event.into_message() {
+            if let Event::Message(message) = event.as_ref() {
                 info!("Event is message: {message:?}");
             }
             api.items_api().get_item_state1("test_item").await.ok();
@@ -65,7 +65,7 @@ mod tests {
     use std::time::Duration;
 
     use hab_rs::{
-        event::{EventType, Message, MessageType, OnOff, StateUpdatedEvent, Topic, TypedValue},
+        event::{Message, MessageType, OnOff, StateUpdatedEvent, Topic, TypedValue},
         rest_api::MockApiClient,
     };
     use tokio::sync::broadcast;
@@ -98,7 +98,7 @@ mod tests {
         // Send event
         let mut state_updated_event = StateUpdatedEvent::default();
         state_updated_event.value = TypedValue::OnOff(OnOff::On);
-        let message_data = serde_json::to_value(Message {
+        let message = Message {
             topic: Topic {
                 namespace: String::new(),
                 entity_type: String::new(),
@@ -106,12 +106,8 @@ mod tests {
                 action: String::new(),
             },
             message_type: MessageType::ItemCommandEvent(state_updated_event),
-        })
-        .unwrap();
-        let on_event = Event {
-            event_type: EventType::Message,
-            data: message_data,
         };
+        let on_event = Arc::new(Event::Message(message));
         event_tx.send(on_event).unwrap();
 
         tokio::time::advance(Duration::from_millis(500)).await;
