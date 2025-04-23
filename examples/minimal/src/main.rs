@@ -4,6 +4,7 @@ use async_trait::async_trait;
 use clap::Parser;
 use hab_rs::{
     event::Event,
+    item::Item,
     rest_api::{Api, configuration::Configuration},
     rule::{Rule, RuleManager},
 };
@@ -29,12 +30,19 @@ impl Rule for TestRule {
         api: Arc<dyn Api>,
         mut event_receiver: Receiver<Arc<Event>>,
     ) -> Result<(), Box<dyn std::error::Error + Send>> {
+        let command_item = Item("command_item".to_string());
+        let test_item = Item("test_item".to_string());
         while let Ok(event) = event_receiver.recv().await {
             info!("Got event: {event:?}");
             if let Event::Message(message) = event.as_ref() {
                 info!("Event is message: {message:?}");
+                if let Some(command_event) = command_item.received_command(message, None) {
+                    info!("Received command event for command_item: {command_event:?}");
+                }
             }
-            api.items_api().get_item_state1("test_item").await.ok();
+            if let Ok(state) = test_item.state(api.items_api()).await {
+                info!("Item state: {state}");
+            }
         }
         Ok(())
     }
