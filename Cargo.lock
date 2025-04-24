@@ -655,7 +655,7 @@ checksum = "a8d1add55171497b4705a648c6b583acafb01d58050a51727785f0b2c8e0a2b2"
 
 [[package]]
 name = "hab-rs"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "async-trait",
  "base64 0.22.1",
@@ -1169,7 +1169,7 @@ dependencies = [
 
 [[package]]
 name = "minimal"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "async-trait",
  "clap",
