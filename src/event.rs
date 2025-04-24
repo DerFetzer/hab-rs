@@ -95,7 +95,7 @@ impl Message {
 pub enum MessageType {
     /// The state of an item is updated.
     #[serde(with = "serde_nested_json")]
-    ItemStateEvent(StateChangedEvent),
+    ItemStateEvent(StateUpdatedEvent),
     /// The state of an item has changed.
     #[serde(with = "serde_nested_json")]
     ItemStateChangedEvent(StateChangedEvent),
@@ -842,6 +842,18 @@ data: {"topic":"openhab/things/jeelink:lacrosse:40/status","payload":"{\"status\
             MessageType::ItemStateChangedEvent(StateChangedEvent {
                 value: TypedValue::Decimal(Decimal(222.23)),
                 old_value: TypedOldValue::Decimal(Decimal(225.99))
+            })
+        );
+    }
+
+    #[test]
+    fn test_state_event() {
+        let message_data = r#"{"topic":"openhab/items/Arbeit_Steck_3DD_EnergyTotal/state","payload":"{\"type\":\"Decimal\",\"value\":\"31.325\"}","type":"ItemStateEvent"}"#;
+        let message: Message = serde_json::from_str(message_data).unwrap();
+        assert_eq!(
+            message.message_type,
+            MessageType::ItemStateEvent(StateUpdatedEvent {
+                value: TypedValue::Decimal(Decimal(31.325)),
             })
         );
     }

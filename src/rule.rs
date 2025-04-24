@@ -99,7 +99,10 @@ impl RuleManager {
                                         event_tx.send(Arc::new(event)).ok();
                                     }
                                     Err(e) => {
-                                        warn!("Could not parse event: {e:?}");
+                                        error!(
+                                            "Could not parse event: {} => {e:?}",
+                                            event_string.trim()
+                                        );
                                     }
                                 }
                             }
