@@ -12,6 +12,9 @@ use tracing::{Instrument, debug, error, info, info_span, instrument, warn};
 
 use crate::event::Event;
 
+/// The main struct of this crate.
+///
+/// First register all rules with [RuleManager::register] and then run them by calling [RuleManager::run].
 pub struct RuleManager {
     api: Arc<ApiClient>,
     config: Configuration,
@@ -19,6 +22,7 @@ pub struct RuleManager {
 }
 
 impl RuleManager {
+    /// Create a new [RuleManager] from a given [Configuration].
     pub fn new(config: Configuration) -> Self {
         RuleManager {
             api: Arc::new(ApiClient::new(Arc::new(config.clone()))),
@@ -27,16 +31,21 @@ impl RuleManager {
         }
     }
 
+    /// Get the internal [ApiClient].
     pub fn get_api(&self) -> &Arc<ApiClient> {
         &self.api
     }
 
+    /// Register a rule.
     pub fn register(&mut self, rule: Box<dyn Rule>) {
         let rule_name = rule.get_name();
         info!("Register rule {rule_name}");
         self.rules.push(rule);
     }
 
+    /// Run the [RuleManager].
+    ///
+    /// This call returns when all rules finished executing.
     #[instrument(skip(self))]
     pub async fn run(self) {
         let (event_tx, _event_rx) = broadcast::channel(100);
@@ -139,10 +148,18 @@ impl RuleManager {
     }
 }
 
+/// All rules must implement this trait.
 #[async_trait]
 pub trait Rule: Send {
+    /// Returns the name of this [Rule]
     fn get_name(&self) -> String;
 
+    /// This method is called inside the [RuleManager::run] method.
+    ///
+    /// Implement your rule's logic here.
+    ///
+    /// It is spawned in its own task and should only be exited on unrecoverable
+    /// errors as it is not restarted.
     async fn run(
         &mut self,
         api: Arc<dyn Api>,

@@ -6,12 +6,16 @@ use tracing::{error, instrument};
 
 use crate::event::{Message, MessageType, StateChangedEvent, StateUpdatedEvent};
 
+/// Wrapper around an openHAB item identified by its name.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Item(pub String);
 
 #[cfg(feature = "items_api")]
 #[cfg_attr(docsrs, doc(cfg(feature = "items_api")))]
 impl Item {
+    /// Send a command to an item.
+    ///
+    /// See <https://www.openhab.org/docs/configuration/rules-dsl.html#manipulating-item-states>.
     #[instrument(skip(items_api))]
     pub async fn send_command(
         &self,
@@ -21,6 +25,9 @@ impl Item {
         items_api.send_item_command(&self.0, command).await
     }
 
+    /// Post an update for an item.
+    ///
+    /// See <https://www.openhab.org/docs/configuration/rules-dsl.html#manipulating-item-states>.
     #[instrument(skip(items_api))]
     pub async fn post_update(
         &self,
@@ -30,6 +37,9 @@ impl Item {
         items_api.update_item_state(&self.0, command, None).await
     }
 
+    /// Get the state of an item.
+    ///
+    /// See <https://www.openhab.org/docs/configuration/rules-dsl.html#using-the-states-of-items-in-rules>.
     #[instrument(skip(items_api))]
     pub async fn state(
         &self,
@@ -40,6 +50,9 @@ impl Item {
 }
 
 impl Item {
+    /// Item received a command.
+    ///
+    /// Checks the entity and optionally the received command.
     pub fn received_command<'a>(
         &'_ self,
         message: &'a Message,
@@ -59,6 +72,9 @@ impl Item {
         None
     }
 
+    /// Item received an update.
+    ///
+    /// Checks the entity and optionally the state.
     pub fn received_update<'a>(
         &'_ self,
         message: &'a Message,
@@ -79,6 +95,9 @@ impl Item {
         None
     }
 
+    /// Item changed its value.
+    ///
+    /// Checks the entity and optionally the old and/or new state.
     pub fn changed<'a>(
         &'_ self,
         message: &'a Message,
@@ -108,6 +127,10 @@ impl Item {
         None
     }
 
+    /// Member of a group changed its value.
+    ///
+    /// Checks the entity and optionally the old and/or new state.
+    /// Returns the triggering item name as well.
     pub fn member_of_group_changed<'a>(
         &'_ self,
         message: &'a Message,

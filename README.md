@@ -8,11 +8,11 @@ Write your home automation rules in Rust and benefit from its vast ecosystem and
 
 ## Usage
 
-See the `examples\` folder for a full example.
+See the `examples` folder for a full example.
 
 ### Quickstart
 
-```rust
+```rust no_run
 use std::{error::Error, sync::Arc};
 
 use async_trait::async_trait;
@@ -55,7 +55,7 @@ impl Rule for TestRule {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let config = Configuration {
-        base_path: "http://your.openhab.instance/rest",
+        base_path: "http://your.openhab.instance/rest".to_string(),
         // openHAB expects the API token as basic auth username with an empty password
         basic_auth: Some(("yourapitoken".to_string(), Some("".to_string()))),
         ..Default::default()
@@ -77,7 +77,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
 ## License
 
-This program is licensed under the MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+Licensed under the MIT license ([LICENSE-MIT][mit-url]).
 
 ## Code of Conduct
 

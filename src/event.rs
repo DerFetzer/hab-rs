@@ -9,12 +9,16 @@ use serde_with::{DeserializeFromStr, SerializeDisplay};
 
 use crate::error::HabRsError;
 
+/// This struct represents an event coming from openHAB's event bus as fetched via REST-API.
 #[derive(Debug, Clone, PartialEq)]
 #[non_exhaustive]
 #[allow(clippy::large_enum_variant)]
 pub enum Event {
+    /// Message event
     Message(Message),
+    /// Alive event
     Alive,
+    /// Unknown event
     Unknown(UnknownEvent),
 }
 
@@ -51,20 +55,28 @@ impl FromStr for Event {
     }
 }
 
+/// Wrapper around an event not known to hab-rs
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct UnknownEvent {
-    event_type: String,
-    data: String,
+    pub event_type: String,
+    pub data: String,
 }
 
+/// This struct represents an event message coming from openHAB's event bus as fetched via REST-API.
+///
+/// See <https://www.openhab.org/docs/developer/utils/events.html>.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 pub struct Message {
+    /// Topic of the message
     pub topic: Topic,
+    /// Type of the message
     #[serde(flatten)]
     pub message_type: MessageType,
 }
 
 impl Message {
+    /// Get the [MessageType] when this message matches the given entity name.
     pub fn get_message_type_for_entity(&self, entity: &str) -> Option<&MessageType> {
         if self.topic.entity == entity {
             Some(&self.message_type)
@@ -72,46 +84,55 @@ impl Message {
             None
         }
     }
-
-    pub fn into_message_type_for_entity(self, entity: &str) -> Option<MessageType> {
-        if self.topic.entity == entity {
-            Some(self.message_type)
-        } else {
-            None
-        }
-    }
 }
 
+/// Event type of a [Message].
+///
+/// See <https://www.openhab.org/docs/developer/utils/events.html#the-core-events>.
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
 #[non_exhaustive]
 #[serde(tag = "type", content = "payload")]
 pub enum MessageType {
+    /// The state of an item is updated.
     #[serde(with = "serde_nested_json")]
     ItemStateEvent(StateChangedEvent),
+    /// The state of an item has changed.
     #[serde(with = "serde_nested_json")]
     ItemStateChangedEvent(StateChangedEvent),
+    /// The state of a group item has changed through a member.
     #[serde(with = "serde_nested_json")]
     GroupItemStateChangedEvent(StateChangedEvent),
+    /// Description not present in the openHAB documentation.
     #[serde(with = "serde_nested_json")]
     ItemStateUpdatedEvent(StateUpdatedEvent),
+    /// The state of an item predicted to be updated.
     #[serde(with = "serde_nested_json")]
     ItemStatePredictedEvent(StatePredictedEvent),
+    /// Description not present in the openHAB documentation.
     #[serde(with = "serde_nested_json")]
     GroupStateUpdatedEvent(StateUpdatedEvent),
+    /// A command is sent to an item via a channel.
     #[serde(with = "serde_nested_json")]
     ItemCommandEvent(StateUpdatedEvent),
+    /// Description not present in the openHAB documentation.
     #[serde(with = "serde_nested_json")]
     RuleStatusInfoEvent(StatusInfoEvent),
+    /// The status of a thing is updated.
     #[serde(with = "serde_nested_json")]
     ThingStatusInfoEvent(StatusInfoEvent),
+    /// The status of a thing changed.
     #[serde(with = "serde_nested_json")]
     ThingStatusInfoChangedEvent([StatusInfoEvent; 2]),
+    /// A channel has been triggered.
     #[serde(with = "serde_nested_json")]
     ChannelTriggeredEvent(ChannelTriggeredEvent),
+    /// Unknown/not implemented
     #[serde(other)]
     Unknown,
 }
 
+/// The status of an entity is updated.
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
@@ -121,6 +142,8 @@ pub struct StatusInfoEvent {
     pub description: Option<String>,
 }
 
+/// The state of an entity has changed.
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 pub struct StateChangedEvent {
@@ -130,6 +153,8 @@ pub struct StateChangedEvent {
     pub old_value: TypedOldValue,
 }
 
+/// An entity has been updated.
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
@@ -138,6 +163,8 @@ pub struct StateUpdatedEvent {
     pub value: TypedValue,
 }
 
+/// The state of an entity predicted to be updated.
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
@@ -147,6 +174,8 @@ pub struct StatePredictedEvent {
     pub is_confirmation: bool,
 }
 
+/// A channel has been triggered.
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, Deserialize, Serialize, Default)]
 #[non_exhaustive]
 #[serde(rename_all = "camelCase")]
@@ -158,6 +187,11 @@ pub struct ChannelTriggeredEvent {
 macro_rules! typed_values {
     ($([$name:ident, $value_name:literal, $value_type_name:literal]),*) => {
         $(
+            /// State and command types
+            ///
+            /// See
+            /// <https://www.openhab.org/docs/concepts/items.html#state-and-command-type-formatting>.
+            #[allow(missing_docs)]
             #[derive(Debug, PartialEq, Deserialize, Serialize, Clone, Default)]
             #[non_exhaustive]
             #[serde(tag = $value_type_name, content = $value_name)]
@@ -258,6 +292,7 @@ macro_rules! from_typed_values {
 
 from_typed_values!([TypedOldValue, TypedPredictedValue]);
 
+/// <https://www.openhab.org/docs/concepts/items.html#decimaltype-percenttype>
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Decimal(pub f64);
 
@@ -275,6 +310,8 @@ impl Display for Decimal {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#quantitytype>
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Quantity {
     pub value: f64,
@@ -301,6 +338,8 @@ impl Display for Quantity {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#pointtype>
+#[allow(missing_docs)]
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Point {
     pub latitude: f64,
@@ -338,6 +377,7 @@ impl Display for Point {
     }
 }
 
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Raw {
     pub mime_type: String,
@@ -382,6 +422,7 @@ impl Display for Raw {
 static DELIMITER_RE: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"[^\\],").expect("Invalid regex"));
 
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct StringList(Vec<String>);
 
@@ -420,6 +461,8 @@ impl Display for StringList {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#enum-types>
+#[allow(missing_docs)]
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum IncreaseDecrease {
     #[default]
@@ -448,6 +491,8 @@ impl Display for IncreaseDecrease {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#enum-types>
+#[allow(missing_docs)]
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum NextPrevious {
     #[default]
@@ -476,6 +521,8 @@ impl Display for NextPrevious {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#enum-types>
+#[allow(missing_docs)]
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum PlayPause {
     #[default]
@@ -504,6 +551,8 @@ impl Display for PlayPause {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#enum-types>
+#[allow(missing_docs)]
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum RewindFastforward {
     #[default]
@@ -532,6 +581,8 @@ impl Display for RewindFastforward {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#enum-types>
+#[allow(missing_docs)]
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum StopMove {
     #[default]
@@ -560,6 +611,8 @@ impl Display for StopMove {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#enum-types>
+#[allow(missing_docs)]
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum UpDown {
     #[default]
@@ -588,6 +641,7 @@ impl Display for UpDown {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#hsbtype>
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Hsb(pub Hsv);
 
@@ -618,6 +672,7 @@ impl Display for Hsb {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#datetimetype>
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct DateTime(pub chrono::DateTime<FixedOffset>);
 
@@ -635,6 +690,8 @@ impl Display for DateTime {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#enum-types>
+#[allow(missing_docs)]
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum OnOff {
     #[default]
@@ -663,6 +720,8 @@ impl Display for OnOff {
     }
 }
 
+/// <https://www.openhab.org/docs/concepts/items.html#enum-types>
+#[allow(missing_docs)]
 #[derive(Debug, Copy, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub enum OpenClosed {
     #[default]
@@ -691,11 +750,16 @@ impl Display for OpenClosed {
     }
 }
 
+/// A topic clearly defines the target of the event and its structure is similar to a REST URI, except the last part, the action.
+///
+/// See <https://www.openhab.org/docs/developer/utils/events.html#the-core-events>.
+#[allow(missing_docs)]
 #[derive(Debug, Clone, PartialEq, DeserializeFromStr, SerializeDisplay, Default)]
 pub struct Topic {
     pub namespace: String,
     pub entity_type: String,
     pub entity: String,
+    /// GroupItemStateChangedEvent has an additional topic part
     pub sub_entity: Option<String>,
     pub action: String,
 }
