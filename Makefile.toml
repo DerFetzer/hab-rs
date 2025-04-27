@@ -77,7 +77,7 @@ dependencies = ["generate-api-client"]
 
 [tasks.generate-api-client]
 command = "openapi-generator"
-args =[
+args = [
     "generate", 
     "-i", "res/openhab_api_spec_pre.json",
     "-g", "rust",
@@ -89,3 +89,24 @@ dependencies = ["clean-api-client", "preprocess-openapi"]
 
 [tasks.refresh-api-client]
 dependencies = ["generate-api-client", "fix-api-client", "copy-features", "format"]
+
+[tasks.semver-checks]
+command = "cargo"
+args = ["semver-checks"]
+
+# Disable publish as cargo-release is used
+[tasks.publish]
+disabled = true
+
+[tasks.test-ignored]
+command = "cargo"
+args = ["test", "--", "--ignored"]
+
+[tasks.release]
+command = "cargo"
+args = ["release", "--execute"]
+dependencies = ["test", "test-ignored", "semver-checks"]
+
+[tasks.release-workspace]
+extend = "release"
+args = ["release", "--workspace", "--execute"]
