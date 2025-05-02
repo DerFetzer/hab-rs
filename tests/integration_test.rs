@@ -14,6 +14,7 @@ use hab_rs::{
     rule::{Rule, RuleManager},
 };
 use palette::Hsv;
+use rstest::rstest;
 use tokio::time::timeout;
 use tracing::info;
 use tracing_test::traced_test;
@@ -95,12 +96,18 @@ impl TestItem {
     }
 }
 
+#[rstest]
+#[case("5.0.0.M2-alpine", 8085)]
+#[case("4.3.5-alpine", 8084)]
+#[case("4.2.3-alpine", 8083)]
+#[case("4.1.3-alpine", 8082)]
+#[case("4.0.4-alpine", 8081)]
 #[tokio::test]
 #[traced_test]
 #[ignore]
-async fn main() -> Result<(), Box<dyn Error>> {
-    let openhab_container = OpenhabContainer::new().await;
-    let config = openhab_container.get_api_configuration();
+async fn main(#[case] tag: &str, #[case] host_port: u16) -> Result<(), Box<dyn Error>> {
+    let openhab_container = OpenhabContainer::new(tag, host_port).await;
+    let config = openhab_container.get_api_configuration(host_port);
 
     let (event_tx, mut event_rx) = tokio::sync::mpsc::channel(100);
 

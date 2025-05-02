@@ -13,12 +13,12 @@ pub struct OpenhabContainer {
 }
 
 impl OpenhabContainer {
-    pub async fn new() -> OpenhabContainer {
-        let container = GenericImage::new("openhab/openhab", "4.3.4-alpine")
+    pub async fn new(tag: &str, host_port: u16) -> OpenhabContainer {
+        let container = GenericImage::new("openhab/openhab", tag)
             .with_wait_for(WaitFor::Duration {
                 length: Duration::from_secs(20),
             })
-            .with_mapped_port(8080, 8080.tcp())
+            .with_mapped_port(host_port, 8080.tcp())
             .with_startup_timeout(Duration::from_secs(120))
             .start()
             .await
@@ -60,9 +60,9 @@ impl OpenhabContainer {
         }
     }
 
-    pub fn get_api_configuration(&self) -> Configuration {
+    pub fn get_api_configuration(&self, host_port: u16) -> Configuration {
         Configuration {
-            base_path: "http://localhost:8080/rest".to_string(),
+            base_path: format!("http://localhost:{}/rest", host_port),
             basic_auth: Some((self.api_token.clone(), Some(String::new()))),
             ..Configuration::default()
         }

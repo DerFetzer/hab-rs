@@ -2,7 +2,7 @@
 [![Crates.io][crates-badge]][crates-url]
 [![MIT licensed][mit-badge]][mit-url]
 
-A [Rust][rust] rule engine for [openHAB][openHAB].
+A [Rust][rust] rule engine for [openHAB][openHAB] (>=4.0).
 
 Write your home automation rules in Rust and benefit from its vast ecosystem and efficiency.
 
