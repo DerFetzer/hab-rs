@@ -62,7 +62,7 @@ impl OpenhabContainer {
 
     pub fn get_api_configuration(&self, host_port: u16) -> Configuration {
         Configuration {
-            base_path: format!("http://localhost:{}/rest", host_port),
+            base_path: format!("http://localhost:{host_port}/rest"),
             basic_auth: Some((self.api_token.clone(), Some(String::new()))),
             ..Configuration::default()
         }

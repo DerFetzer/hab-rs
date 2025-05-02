@@ -43,7 +43,7 @@ impl Rule for DummyRule {
                     info!("Send updated event: {updated_event:?}");
                     self.event_tx.send(updated_event.clone()).await.unwrap();
                 }
-            };
+            }
         }
         Ok(())
     }

@@ -14,7 +14,7 @@ use crate::event::Event;
 
 /// The main struct of this crate.
 ///
-/// First register all rules with [RuleManager::register] and then run them by calling [RuleManager::run].
+/// First register all rules with [`RuleManager::register`] and then run them by calling [`RuleManager::run`].
 pub struct RuleManager {
     api: Arc<ApiClient>,
     config: Configuration,
@@ -22,7 +22,7 @@ pub struct RuleManager {
 }
 
 impl RuleManager {
-    /// Create a new [RuleManager] from a given [Configuration].
+    /// Create a new [`RuleManager`] from a given [Configuration].
     pub fn new(config: Configuration) -> Self {
         RuleManager {
             api: Arc::new(ApiClient::new(Arc::new(config.clone()))),
@@ -31,7 +31,7 @@ impl RuleManager {
         }
     }
 
-    /// Get the internal [ApiClient].
+    /// Get the internal [`ApiClient`].
     pub fn get_api(&self) -> &Arc<ApiClient> {
         &self.api
     }
@@ -112,9 +112,9 @@ impl RuleManager {
                     .instrument(loop_span.clone())
                     .await;
                     match res {
-                        Ok(_) => warn!("Event task exited without error"),
+                        Ok(()) => warn!("Event task exited without error"),
                         Err(e) => error!("Event task exited with error: {e:?}"),
-                    };
+                    }
                 }
             }
             .instrument(info_span!("Event task")),
@@ -122,7 +122,7 @@ impl RuleManager {
 
         while let Some(res) = rules_set.join_next_with_id().await {
             match res {
-                Ok((id, Ok(_))) => warn!(
+                Ok((id, Ok(()))) => warn!(
                     "Rule {} exited.",
                     Self::get_name_from_id(id, &rule_task_names)
                 ),

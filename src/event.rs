@@ -31,12 +31,12 @@ impl FromStr for Event {
                 if first_line.starts_with("event: ") && second_line.starts_with("data: ") =>
             {
                 let event_type = first_line
-                    .split_once(":")
+                    .split_once(':')
                     .expect("First line does not contain ':'")
                     .1
                     .trim();
                 let data = second_line
-                    .split_once(":")
+                    .split_once(':')
                     .expect("First line does not contain ':'")
                     .1
                     .trim();
@@ -76,7 +76,7 @@ pub struct Message {
 }
 
 impl Message {
-    /// Get the [MessageType] when this message matches the given entity name.
+    /// Get the [`MessageType`] when this message matches the given entity name.
     pub fn get_message_type_for_entity(&self, entity: &str) -> Option<&MessageType> {
         if self.topic.entity == entity {
             Some(&self.message_type)
@@ -322,10 +322,10 @@ impl FromStr for Quantity {
     type Err = HabRsError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.split(" ").collect::<Vec<_>>().as_slice() {
+        match s.split(' ').collect::<Vec<_>>().as_slice() {
             [value, unit] => Ok(Self {
                 value: f64::from_str(value)?,
-                unit: unit.to_string(),
+                unit: (*unit).to_string(),
             }),
             _ => Err(HabRsError::Parse(s.to_string())),
         }
@@ -351,7 +351,7 @@ impl FromStr for Point {
     type Err = HabRsError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.split(",").collect::<Vec<_>>().as_slice() {
+        match s.split(',').collect::<Vec<_>>().as_slice() {
             [latitude, longitude] => Ok(Self {
                 latitude: f64::from_str(latitude)?,
                 longitude: f64::from_str(longitude)?,
@@ -371,7 +371,7 @@ impl Display for Point {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{},{}", self.latitude, self.longitude)?;
         if let Some(altitude) = &self.altitude {
-            write!(f, ",{}", altitude)?;
+            write!(f, ",{altitude}")?;
         }
         Ok(())
     }
@@ -388,16 +388,16 @@ impl FromStr for Raw {
     type Err = HabRsError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.split(";").collect::<Vec<_>>().as_slice() {
+        match s.split(';').collect::<Vec<_>>().as_slice() {
             [mime_type, data] if mime_type.starts_with("data:") && data.starts_with("base64,") => {
                 Ok(Self {
                     mime_type: mime_type
-                        .split_once(":")
+                        .split_once(':')
                         .ok_or_else(|| HabRsError::Parse(s.to_string()))?
                         .1
                         .to_string(),
                     data: BASE64_STANDARD.decode(
-                        data.split_once(",")
+                        data.split_once(',')
                             .ok_or_else(|| HabRsError::Parse(s.to_string()))?
                             .1,
                     )?,
@@ -454,7 +454,7 @@ impl Display for StringList {
             "{}",
             self.0
                 .iter()
-                .map(|s| s.replace(",", "\\,"))
+                .map(|s| s.replace(',', "\\,"))
                 .collect::<Vec<_>>()
                 .join(",")
         )
@@ -649,7 +649,7 @@ impl FromStr for Hsb {
     type Err = HabRsError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.split(",").collect::<Vec<_>>().as_slice() {
+        match s.split(',').collect::<Vec<_>>().as_slice() {
             [h, s, b] => Ok(Self(Hsv::new_srgb(
                 f32::from_str(h)?,
                 f32::from_str(s)? / 100.0,
@@ -759,7 +759,7 @@ pub struct Topic {
     pub namespace: String,
     pub entity_type: String,
     pub entity: String,
-    /// GroupItemStateChangedEvent has an additional topic part
+    /// `GroupItemStateChangedEvent` has an additional topic part
     pub sub_entity: Option<String>,
     pub action: String,
 }
@@ -768,23 +768,23 @@ impl FromStr for Topic {
     type Err = HabRsError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.chars().any(|c| c.is_whitespace()) {
+        if s.chars().any(char::is_whitespace) {
             return Err(HabRsError::Parse(s.to_string()));
         }
-        match s.split("/").collect::<Vec<_>>().as_slice() {
+        match s.split('/').collect::<Vec<_>>().as_slice() {
             [namespace, entity_type, entity, action] => Ok(Self {
-                namespace: namespace.to_string(),
-                entity_type: entity_type.to_string(),
-                entity: entity.to_string(),
+                namespace: (*namespace).to_string(),
+                entity_type: (*entity_type).to_string(),
+                entity: (*entity).to_string(),
                 sub_entity: None,
-                action: action.to_string(),
+                action: (*action).to_string(),
             }),
             [namespace, entity_type, entity, sub_entity, action] => Ok(Self {
-                namespace: namespace.to_string(),
-                entity_type: entity_type.to_string(),
-                entity: entity.to_string(),
-                sub_entity: Some(sub_entity.to_string()),
-                action: action.to_string(),
+                namespace: (*namespace).to_string(),
+                entity_type: (*entity_type).to_string(),
+                entity: (*entity).to_string(),
+                sub_entity: Some((*sub_entity).to_string()),
+                action: (*action).to_string(),
             }),
             _ => Err(HabRsError::Parse(s.to_string())),
         }
