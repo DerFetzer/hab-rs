@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Test against more openHAB versions
+- New Thing struct
 
 ## [0.3.2] - 2025-04-25
 

@@ -10,6 +10,8 @@ pub mod event;
 pub mod item;
 /// Provides rule trait and manager
 pub mod rule;
+/// Types for thing handling
+pub mod thing;
 
 /// Generated REST-API
 pub use hab_rs_api_client::apis as rest_api;
