@@ -2,6 +2,8 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![doc = include_str!("../README.md")]
 
+/// Types for channel handling
+pub mod channel;
 /// Types for errors produced by hab-rs
 pub mod error;
 /// Types for openHAB events and messages
